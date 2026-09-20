@@ -1,10 +1,19 @@
 # Step 23 · The monsters' turn
 
-After the player acts, every other entity should get a turn. The real behaviour comes in the next chapter; for now they just complain, which proves the loop works.
+### The problem
+
+Monsters never act. In a turn-based game the rule is: the player acts, then every other entity acts, then the screen is redrawn. The place for that is right after the player's action in `HandleEvent`. Real behaviour needs hit points and a brain, which is the next chapter; for now each monster just announces that it would like a turn, which proves the loop works and shows the order of events.
+
+>>> Add `HandleEnemyTurns` to the engine that logs a complaint for every entity except the player, and call it after the player's action and before the field of view is recomputed.
+
+!!! Every move fills the message area with grumbling monsters.
+
+--- reveal
 
 {{diff engine.go}}
 
-- `HandleEnemyTurns` runs after the player's action and before the field of view is recomputed. `ent != e.Player` compares pointers: the player is skipped.
-- The message is built with `fmt.Sprintf`, so `engine.go` imports `fmt` now; the import block gains a standard-library group above the tcell line.
+- `ent != e.Player` compares pointers: the player is skipped. `engine.go` imports `fmt` now; the import block gains a standard-library group.
 
-!!! Run it: every move fills the message area with grumbling monsters. Satisfying enough; in the next chapter they get teeth.
+--- end
+
+%%% Move `HandleEnemyTurns` *before* the player's action. The messages look the same, but from chapter 6 on the difference is real: monsters would move before you do, and a monster next to you would hit you before your attack lands. Order of turns is a design decision; roguelikes let the player go first.

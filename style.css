@@ -670,3 +670,28 @@ body[data-kind="tui"] .only-stdout { display: none; }
 .snippet-resize { position: static; height: 14px; background: var(--code-head); }
 .snippet-resize.idle { opacity: .35; }
 .snippet.diff .snippet-body pre { padding: 8px 0; }
+
+/* ---------- try it first / reveal / experiments ---------- */
+.try {
+  margin: 16px 0; padding: 14px 18px; border-radius: 16px;
+  background: linear-gradient(135deg, var(--ex-bg1), var(--ex-bg2));
+  border: 2px solid var(--lav);
+}
+.try-head { font-weight: 800; margin-bottom: 6px; color: var(--lav-deep); }
+.try p { margin: 6px 0; }
+.try-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 10px; font-size: 0.8rem; }
+.try-actions .ghost-btn { border-color: var(--lav); color: var(--ink); font-size: 0.75rem; }
+.try-always { color: var(--muted); display: flex; align-items: center; gap: 6px; cursor: pointer; }
+details.reveal { margin: 14px 0; border: 2px dashed var(--pink-soft); border-radius: 16px; padding: 0 16px; }
+details.reveal > summary {
+  cursor: pointer; padding: 12px 0; font-weight: 700; color: var(--code-hi); list-style: none;
+}
+details.reveal > summary::before { content: "▸ "; }
+details.reveal[open] > summary::before { content: "▾ "; }
+details.reveal > summary::-webkit-details-marker { display: none; }
+.reveal-body { padding-bottom: 8px; }
+.experiment {
+  margin: 14px 0; padding: 12px 16px; border-radius: 14px;
+  background: var(--card); border: 2px solid var(--lav); font-size: 0.92rem;
+}
+.experiment::before { content: "🔬 break it on purpose: "; font-weight: 700; color: var(--lav-deep); }

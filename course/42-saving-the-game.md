@@ -1,25 +1,34 @@
 # Step 42 · Saving the game
 ## Chapter: Saving and loading
 
-Escape should save, and the next run should continue where you left off. Go's `encoding/gob` serialises our whole graph of structs, slices and interface values in one call, with two catches that this file handles.
+### In this chapter
 
-Create `saveload.go`:
+Quitting should save, the next run should continue, and dying should delete the save. Go's `encoding/gob` does the serialisation in one call, but two properties of our data need care and both were decided earlier for exactly this reason: no cycles between components and entities, and a player that is one of the map's entities.
+
+### The problem
+
+Everything about a game is reachable from the engine: the map, its tiles and entities, the log. gob can write all of that, including interface values, with two catches. First, gob writes what a pointer points to, so two pointers to the same entity come back as two separate entities; `Engine.Player` is also inside `GameMap.Entities`, and after loading they would be different objects. The fix is to save the player's *index* and re-link. Second, gob must know every concrete type that can hide behind `AI` and `Consumable` before it sees one, so each is registered once at start-up.
+
+>>> Create `saveload.go` with a `saveData` struct (map, log, player index), an `init` that registers the AI and consumable types, `Engine.SaveAs(path) error` and `LoadGame(path) (*Engine, error)` that re-links the player and recomputes the FOV. Escape in the main game saves before quitting (and refuses to quit if saving fails); Escape on game over removes the file. For now, `main.go` loads the save if there is one.
+
+!!! Play a little, press Escape, run again: everything is where you left it, log included. Die and press Escape: next run is a fresh dungeon.
+
+--- reveal
 
 {{file saveload.go}}
 
-- **Catch 1: pointer identity.** `Engine.Player` points at an entity that is *also* in `GameMap.Entities`. gob does not know they are the same object: it would write the player twice and read back two separate copies, and the map's player would no longer be the one you control. So `saveData` stores the player's **index** in the entity list, and `LoadGame` re-links `Player` after decoding. This is also why components never point back at their entity: no cycles, nothing duplicated.
-- **Catch 2: interfaces.** `Entity.AI` and `Entity.Consumable` are interface fields. To decode them gob must know every concrete type that can appear, so the `init` function registers each one: a value for types we store as values, a pointer for `ConfusedEnemy`. `init` runs automatically before `main`.
+- `init` runs automatically before `main`. Register a value for types stored as values, a pointer for `ConfusedEnemy`.
 - gob only writes **exported** (capitalised) fields, which every field in the game already is.
-- `os.Create` and `os.Open` return files that must be closed; `defer f.Close()` right after the error check, the same shape as `Fini` in step 3.
-
-Escape in the main game saves before quitting; Escape on the game-over screen deletes the file instead (dead is dead):
+- `defer f.Close()` right after the error check, the same shape as `Fini` in step 3.
 
 {{diff input.go}}
 
-And for now `main.go` loads the save if there is one:
-
 {{diff main.go}}
 
-- `engine, err := LoadGame(saveFile)` followed by `engine = &Engine{...}` with plain `=`: the variable already exists, so this is an assignment, not a declaration.
+- `engine, err := LoadGame(saveFile)` followed by `engine = &Engine{...}` with plain `=`: an assignment to an existing variable, not a declaration.
 
-!!! Run it: play a little, press Escape, run it again: everything is where you left it, message log included. Die and press Escape: next run is a fresh dungeon.
+--- end
+
+%%% Comment out `gob.Register(&ConfusedEnemy{})`, confuse an orc, and quit. Saving fails with `gob: type not registered`, and thanks to the check in the Escape handler you stay in the game with an error message instead of losing it.
+
+%%% Delete the line in `LoadGame` that sets `engine.Player` from the saved index. Loading now crashes on the first key press with a nil pointer, because after decoding, the player is only reachable through that index.

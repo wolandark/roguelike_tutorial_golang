@@ -1,19 +1,23 @@
 # Step 48 · Gear
 ## Chapter: Equipment
 
-Daggers, swords, leather armour and chain mail: items that are worn rather than used up. This step makes them exist, lie around and get picked up; the next one makes them do something.
+### In this chapter
 
-Create `equipment.go`:
+Daggers, swords, leather armour and chain mail: items that are worn rather than used up, adding to attack and defense. Two steps: make gear exist and get picked up, then make it count. The design decision here is one place where this course knowingly departs from the Python tutorial, because of how saving works in Go.
+
+### The problem
+
+An item that is worn needs a slot (weapon or armour), bonuses, and a way to know whether it is currently worn. The Python tutorial stores that last fact on the *wearer*, as pointers to the worn items. Those items also live in the inventory, so after a gob round trip (step 42) the wearer's pointers would point at *copies*. Keeping one `Equipped` flag **on the item** means there are no shared pointers and nothing to re-link after loading; "what is in my weapon slot" becomes a scan of the inventory, which is at most 26 items.
+
+>>> Create `equipment.go` with `EquipmentType` (`Weapon`, `Armor`), an `Equippable` component (type, bonuses, `Equipped`), and helpers on `Entity`: `EquippedItem(slot)`, `ItemIsEquipped`, `PowerBonus`, `DefenseBonus`, `ToggleEquip(engine, item, addMessage)` that unequips the slot's current item first. Add the component to `Entity` (copied in `Spawn`), define `IsItem` as consumable or equippable and use it in pickup, add four templates, and put swords on floor 4 and chain mail on floor 6 in the spawn table.
+
+!!! On deeper floors you can find and pick up `/` and `[`. Selecting one in the inventory does nothing sensible yet.
+
+--- reveal
 
 {{file equipment.go}}
 
-- `EquipmentType` is another `iota` enumeration: the slot an item goes into.
-- `Equippable` is the component for gear: a slot, two bonuses, and `Equipped`. A deliberate departure from the Python tutorial, which keeps pointers to the worn items on the *wearer*. Those same items also live in the inventory, so after a gob round trip (step 42) the wearer's pointers would point at *copies*. Keeping one `Equipped` flag **on the item** means there are no shared pointers and nothing to relink.
-- The wearer-side helpers are methods on `Entity`: `EquippedItem` scans the inventory for the worn item of a slot; `PowerBonus` and `DefenseBonus` add up both slots; `ToggleEquip` equips or removes, and equipping into an occupied slot removes the old item first. `addMessage` lets the starting gear be equipped silently.
-
 {{diff entity.go}}
-
-- `IsItem` now means "consumable **or** equippable", and pickup uses it:
 
 {{diff actions.go}}
 
@@ -21,6 +25,6 @@ Create `equipment.go`:
 
 {{diff procgen.go}}
 
-- Swords appear from floor 4 with a low weight, chain mail from floor 6.
+--- end
 
-!!! Run it: on deeper floors you can find and pick up `/` and `[`. Selecting one in the inventory does nothing sensible yet (it has no consumable), which the next step fixes.
+%%% Equip an item, save, load, and check `ItemIsEquipped` still says yes (it does: the flag travelled with the item). Then imagine the Python design: the wearer's pointer would now point at a copy that is *not* in the inventory. That is the whole reason for the flag.

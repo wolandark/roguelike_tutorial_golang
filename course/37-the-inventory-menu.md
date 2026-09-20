@@ -1,13 +1,20 @@
 # Step 37 · The inventory menu
 
-`i` opens a list of what you carry, each item with a letter; pressing the letter uses it. `d` opens the same list to drop something. "Use" and "drop" are the **same handler** with a different title and a different function for what happens to the chosen item.
+### The problem
+
+`i` should show what you carry, each item with a letter, and pressing the letter should use it; `d` should show the same list to drop something. Two menus that differ only in title and in what happens to the chosen item. Writing two handler types would duplicate the drawing and the letter handling. Go's alternative to a subclass-per-menu is a field of **function type**: the menu calls `OnSelect(engine, item)` and does not care what it does. The item's own `Consumable.GetAction` decides whether using it is immediate or needs a target.
+
+>>> Add an `InventoryHandler` with `Engine`, `Parent`, `Title` and `OnSelect func(*Engine, *Entity) (Action, EventHandler)`. `OnRender` draws the parent, then a window on the side away from the player listing `(a) Name`. `HandleEvent` maps a letter to an item, logs "Invalid entry." past the end, otherwise switches to the returned handler or runs the action through `runAction`; any non-letter closes. Two functions, `useItem` (asks the consumable) and `dropItem` (returns `DropItem`). Bind `i` and `d`.
+
+!!! Pick up a potion, take some damage, press `i` then `a`: you recover 4 HP and the potion is gone. At full health: grey message, potion kept, no turn. `d` then a letter drops an item where you stand.
+
+--- reveal
 
 {{diff input.go}}
 
-- `OnSelect func(engine *Engine, item *Entity) (Action, EventHandler)` is a field of **function type**. `useItem` and `dropItem` are two plain functions with that signature; the main handler passes one or the other when it creates the menu. This is Go's way to avoid one handler type per menu.
-- `useItem` asks the consumable via `GetAction`; `dropItem` returns a `DropItem` action.
-- `OnRender` draws the window on whichever side of the screen the player is *not* on, so the menu never covers the `@`. `'a'+i` turns an index into a letter; `%c` prints a rune.
-- `HandleEvent` maps a letter back to an index (`key.Rune() - 'a'`), complains about letters past the end of the list, and otherwise either switches to the handler the item returned or runs the action through `runAction`. Any non-letter key returns `Parent` and closes the menu.
+- `'a'+i` turns an index into a letter; `key.Rune() - 'a'` turns it back. `%c` prints a rune.
 - `input.go` now formats strings, so `fmt` joins its imports.
 
-!!! Run it: pick up a potion, take some damage, press `i` then `a`: you recover 4 HP and the potion is gone. Try it at full health: grey message, potion kept, no turn. `d` then a letter drops an item where you stand.
+--- end
+
+%%% Add a third menu bound to `x` with the title "Select an item to examine" and an `OnSelect` that logs the item's name and returns `nil, nil`. Three lines, no new types: that is what the function field buys.

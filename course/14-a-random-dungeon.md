@@ -1,20 +1,26 @@
 # Step 14 · A random dungeon
 
-Rooms plus tunnels plus a loop that tries random rooms and keeps the ones that fit: that is the whole generator. Each new room is connected to the previous one, so the dungeon is always fully connected, and the player starts in the first room.
+### The problem
 
-Add to `procgen.go`:
+Rooms and tunnels by hand are fine for two rooms. A level needs dozens, in random places, without overlapping. The classic generator is almost embarrassingly simple: try a random room; if it overlaps one you already placed, throw it away; otherwise carve it and dig a tunnel to the previous room. Because every kept room connects to the one before it, the level is always fully connected, without any graph algorithm. The cost is that the number of rooms is not fixed; you choose how many *attempts* to make.
+
+To reject overlaps you need a test for two rectangles. Think about when two rooms do *not* overlap: one is entirely to the left, right, above or below the other. Negate that and you have the test.
+
+>>> Add `Intersects(other RectangularRoom) bool` and `GenerateDungeon(maxRooms, roomMinSize, roomMaxSize, mapWidth, mapHeight int, player *Entity) *GameMap`, which makes a map, tries `maxRooms` random rooms, keeps the non-overlapping ones, puts the player in the first room's centre and tunnels each new room to the previous one. Use it from `main.go` with three named constants (30 attempts, sizes 6 to 10).
+
+!!! A different dungeon every time. You start in the middle of a room; every room is reachable.
+
+--- reveal
 
 {{diff procgen.go}}
 
-- `Intersects` is true unless one room is entirely left of, right of, above or below the other. Written positively, that is the four comparisons.
-- `GenerateDungeon` *tries* `maxRooms` times. Each try picks a random size within the limits (`rand.IntN(n)` is uniform in `[0, n)`, hence the `+1`) and a random position that keeps the room inside the map. If the candidate overlaps a room we already have, `continue` throws it away and tries again, so the real number of rooms is usually smaller than `maxRooms`.
-- `len(rooms) == 0` identifies the first room: the player goes to its centre. Every later room gets a tunnel from the previous room's centre (`rooms[len(rooms)-1]` is the last element).
-- The function receives the player pointer and *sets* its position, then returns the finished map.
-
-`main.go` gets three knobs and loses the hand-made rooms and the NPC:
+- `Intersects`: "not entirely to one side", written positively as four comparisons.
+- `rand.IntN(n)` is uniform in `[0, n)`, hence the `+1` for an inclusive size range. The position is chosen so the room stays inside the map.
+- `continue` throws away an overlapping candidate; `rooms[len(rooms)-1]` is the last kept room.
+- The function receives the player pointer and *sets* its position: a side effect through a pointer, which is fine here and is what the caller expects.
 
 {{diff main.go}}
 
-- Note `player := &Entity{Char: '@', Color: tcell.ColorWhite}`: the position is left at zero and filled in by the generator.
+--- end
 
-!!! Run it: a different dungeon every time. You start in the middle of a room; every room is reachable. The whole map is visible, which spoils exploration; that is chapter 4.
+%%% Set `maxRooms` to 300. The level fills up with rooms until nothing fits; the generator never loops forever because every attempt is independent. Now set `roomMinSize` above `roomMaxSize` and watch `rand.IntN` panic on a negative argument; the constants are a contract.

@@ -1,21 +1,30 @@
 # Step 38 · Lightning
 ## Chapter: Scrolls and targeting
 
-The first scroll needs no aiming: lightning strikes the **closest visible enemy** within range. That is a scan over all living fighters keeping the nearest one, a pattern worth knowing on its own. If nobody qualifies the scroll is not wasted.
+### In this chapter
+
+Three scrolls: lightning picks its own target, confusion and fireball need you to aim. Aiming needs a cursor mode, which also gives a free "look" command. The Go theme is functions as values: callbacks and closures let one cursor handler serve looking, single-target and area-target scrolls.
+
+### The problem
+
+A lightning scroll strikes the nearest visible enemy within range. The consumable interface from step 35 fits without changes: `GetAction` returns an item action, `Activate` finds the target. Finding "the closest of these" is a loop that keeps the best candidate so far; starting the best distance at "just out of range" means the first in-range candidate always wins and out-of-range ones never do. The map needs one helper, "all living fighters", so scrolls do not filter corpses themselves.
+
+>>> Add `Actors()` to the map. Add `LightningDamageConsumable{Damage, MaximumRange}` whose `Activate` scans visible actors other than the consumer for the closest within range, is `Impossible` if none, otherwise logs, damages and consumes. Add a `lightningScroll` template (`~`, yellow) and make item placement 70% potions, 30% scrolls.
+
+!!! Pick up a yellow `~`, wait for an orc to come into view, use it from `i`. With nobody near: "No enemy is close enough to strike." in grey, scroll kept.
+
+--- reveal
 
 {{diff gamemap.go}}
 
-- `Actors` returns every living fighter, so consumables do not have to filter corpses and items themselves.
-
 {{diff consumable.go}}
 
-- Another type implementing `Consumable`. `GetAction` is the same as the potion's: an `ItemAction` right away.
-- `Activate` starts `closest` at "farther than allowed", so the first candidate in range always wins, then keeps the closest. `if d := ...; d < closest` declares `d` for the `if` only. The consumer is skipped, and so is anything out of sight. 20 damage kills anything on the early floors.
+- `if d := ...; d < closest` declares `d` for the `if` only.
 
 {{diff entity_factories.go}}
 
 {{diff procgen.go}}
 
-- 70% potions, 30% lightning scrolls for now.
+--- end
 
-!!! Run it: pick up a yellow `~`, wait for an orc to come into view, use the scroll from `i`. With nobody near: "No enemy is close enough to strike." in grey, scroll kept.
+%%% Remove the `actor == consumer` check. With no enemy in sight, the closest visible actor is you: the scroll strikes the caster. Self-targeting bugs are the classic scroll bug; every targeted effect below has the same guard.

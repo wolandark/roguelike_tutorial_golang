@@ -8,7 +8,26 @@ const state = {
   drafts: JSON.parse(localStorage.getItem("rogueCuteDrafts") || "{}"),   // "slug/file.go" -> code
   exDone: new Set(JSON.parse(localStorage.getItem("rogueCuteExDone") || "[]")),
   exDrafts: JSON.parse(localStorage.getItem("rogueCuteExDrafts") || "{}"),
+  reveal: !!localStorage.getItem("rogueCuteReveal"),
 };
+
+// loadPreviousStep puts the previous step's version of every file into this
+// step's editor, so the reader can attempt the step themselves and build/play
+// it. Files that are new in this step start as an empty package.
+function loadPreviousStep(i) {
+  const l = LESSONS[i], prev = LESSONS[i - 1];
+  const before = Object.fromEntries(prev.files.map((f) => [f.name, f.code]));
+  l.files.forEach((f) => {
+    const code = before[f.name] ?? "package main\n";
+    if (code === f.code) delete state.drafts[draftKey(l, f)];
+    else state.drafts[draftKey(l, f)] = code;
+  });
+  save();
+  buildTabs(l);
+  showFile(l, state.file);
+  squeak("the editor now holds the previous step. make it do the new thing, then play it~ 🧪");
+  $("codeHeading").scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
 let EXERCISES = {};
 
@@ -123,6 +142,20 @@ function openLesson(i, push = true) {
     c.innerHTML = Prism.highlight(c.textContent, Prism.languages.go, "go");
   });
   enhanceSnippets(prose);
+  // "try it first": hidden solutions, load-previous-step, always-show preference
+  prose.querySelectorAll("details.reveal").forEach((d) => { if (state.reveal) d.open = true; });
+  prose.querySelectorAll(".try-always-box").forEach((b) => {
+    b.checked = state.reveal;
+    b.addEventListener("change", () => {
+      state.reveal = b.checked;
+      localStorage.setItem("rogueCuteReveal", state.reveal ? "1" : "");
+      prose.querySelectorAll("details.reveal").forEach((d) => { d.open = state.reveal; });
+    });
+  });
+  prose.querySelectorAll(".try-load").forEach((b) => {
+    if (i === 0) { b.remove(); return; }
+    b.addEventListener("click", () => loadPreviousStep(i));
+  });
 
   $("runCmd").textContent = `go run ./${l.base}`;
   // open the first new/changed file, or main.go

@@ -1,35 +1,36 @@
 # Step 34 · Impossible actions
 ## Chapter: Items and inventory
 
-Walking into a wall should tell you so, and it should **not** cost a turn: monsters must not get a free hit because you bumped a wall. Go's tool for "this could not be done" is an error value, so actions now return `error`, and one special error type carries the message for the player.
+### In this chapter
 
-Create `exceptions.go`:
+Potions on the floor, an inventory to carry them, a menu to use or drop them. Before any of that, a rule that every roguelike needs and that shapes all later actions: an action that *cannot* be done should say why and must not cost a turn.
+
+### The problem
+
+Walk into a wall in step 33 and the monsters get a free turn. That is unfair, and it gets worse with items: drinking a potion at full health should not waste the potion or the turn. Two designs are possible. `Perform` could return a `bool`, "did something happen?", but then it cannot say *why* not. Or it could return an `error`, which carries a message, and a special error type can mark the "not possible, no turn" case so that the loop can tell it apart from a real failure. Go's `errors.As` is built for exactly that distinction.
+
+>>> Create `exceptions.go` with an `Impossible` struct holding a message and an `Error() string` method. Make every `Perform` (actions and AI) return `error`; walls, blocked cells and attacking nothing return an `Impossible`. Move the tail of the main handler into a `runAction(engine, self, action) EventHandler`: on an `Impossible`, log its message in grey and return `self` without an enemy turn; on any other error, log it in red; otherwise enemies act, FOV updates, and the next handler is game-over or a fresh main-game handler.
+
+!!! Walk into a wall: a grey "That way is blocked." and the monsters do **not** move. Compare with a real step, after which they do.
+
+--- reveal
 
 {{file exceptions.go}}
 
-- Any type with an `Error() string` method satisfies Go's built-in `error` interface. `Impossible` is such a type: a struct holding the message to show.
-
-Every action returns an error now:
+- Any type with an `Error() string` method satisfies Go's built-in `error` interface.
 
 {{diff actions.go}}
 
-- `EscapeAction` and `WaitAction` return `nil` (no problem). Melee with no target, and movement into a wall or another entity, return an `Impossible` with a message. `return MeleeAction{...}.Perform(...)` passes the inner action's result straight through.
-
-The AI interface follows suit:
+- `return MeleeAction{...}.Perform(...)` passes the inner action's result straight through.
 
 {{diff ai.go}}
 
-The main handler's tail becomes a shared function:
-
 {{diff input.go}}
 
-- `runAction` is the one place where the rule lives. It performs the action; if the error **is an `Impossible`**, the message is logged in grey and the same handler is returned: no enemy turn. `errors.As(err, &imp)` checks the error's type and copies it into `imp` if it matches; it also sees through errors that were wrapped. Any other error is logged in red. On success the enemies act, the field of view updates, and the next handler is game-over or a fresh main-game handler.
-- `import "errors"` is standard library, so it goes in the first group.
-
-Two colours for the new messages:
+- `errors.As(err, &imp)` checks the error's type and copies it into `imp` if it matches, seeing through wrapped errors too. `runAction` is the one place where the rule lives, and every handler that can produce a player action will end with it.
 
 {{diff colors.go}}
 
-- The engine ignores the errors monsters' actions return: a monster that walks into a wall simply loses its turn.
+--- end
 
-!!! Run it: walk into a wall: a grey "That way is blocked." and the monsters do **not** move. Compare with a real step, after which they do.
+%%% In `runAction`, replace `errors.As` with `err == (Impossible{"That way is blocked."})`. Only walls are free now; attacking nothing still costs a turn. Comparing errors by type, not by value or message, is what makes the rule general.

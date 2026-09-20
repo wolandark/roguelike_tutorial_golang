@@ -1,9 +1,19 @@
 # Step 17 · Hiding entities
 
-The map hides tiles, but the engine still draws every entity. Only visible ones should show, so monsters can lurk in the dark. To have something to test with, `main.go` puts a yellow `@` twelve cells to your right.
+### The problem
+
+The map hides tiles, but the engine still draws every entity, including ones standing in the dark. An entity should be drawn only if its cell is visible. The map already knows that; the engine just has to ask. To test it we need something to hide, so `main.go` puts a yellow `@` twelve cells to your right for this step only.
+
+>>> In `Engine.Render`, skip entities whose cell is not visible. Place a yellow `@` at `player.X+12` to try it on.
+
+!!! The yellow `@` is invisible until your field of view reaches it, then it appears and disappears as you move.
+
+--- reveal
 
 {{diff engine.go}}
 
 {{diff main.go}}
 
-!!! Run it: the yellow `@` is invisible until your field of view reaches it (walk towards it; it is often through a wall), then it appears and disappears as you move.
+--- end
+
+%%% Move the check so that entities are drawn when their cell is *explored* rather than visible. Now the yellow `@` stays on screen once seen, even when you cannot see it: that is how some roguelikes show remembered items but never remembered monsters. Put it back to `IsVisible`.

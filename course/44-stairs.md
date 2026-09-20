@@ -1,39 +1,40 @@
 # Step 44 · Stairs
 ## Chapter: Delving deeper
 
-One floor is not a dungeon. The last room of every level gets a `>` staircase; pressing `>` on it generates a fresh level one floor deeper. A `GameWorld` remembers the generator settings and the depth.
+### In this chapter
+
+One floor is not a dungeon. Stairs lead to new levels, kills give experience, and experience buys stat increases through a menu you cannot dismiss. Nothing new in Go; the interesting parts are what survives a floor change (only the player) and how a component can serve both monsters and the player with different fields set.
+
+### The problem
+
+Pressing `>` on a staircase should generate a fresh level one floor down, with the player in it and everything else left behind. Two design questions. Where is the staircase: the last room the generator carved, whose centre we already have. And who owns "how deep are we" and "how to make a floor": a small `GameWorld` with the generator settings and the floor counter, which the engine holds and the save file includes. Because the player must move into the new map's entity list, `Spawn` gains the ability to copy a template without placing it.
+
+>>> Add a `downStairs` tile and `DownstairsX/Y` on the map; place the stairs in the last room. Add `GameWorld` (generator settings, `CurrentFloor`) with `GenerateFloor(engine)` that makes a new map, appends the player, and generates. Add `TakeStairsAction` (`Impossible` off the stairs), bound to `>`. Let `Spawn` accept a `nil` map; `NewGame` spawns the player that way and calls `GenerateFloor`. Save the world, and draw "Dungeon level: N" under the bar.
+
+!!! "Dungeon level: 1" under the bar. Explore until you find the `>`, stand on it, press `>`: "You descend the staircase." and a new level 2. Press `>` elsewhere: "There are no stairs here."
+
+--- reveal
 
 {{diff tiles.go}}
 
 {{diff gamemap.go}}
 
-- The map remembers where its stairs are, so the stairs check is a comparison, not a search.
-- `GameWorld.GenerateFloor` throws the old map away, makes a new one, puts the player into its entity list and runs the generator, which moves the player into the first room. Everything left on the old floor is gone; there is no going back up, as in the original tutorial.
-
 {{diff procgen.go}}
-
-- The generator remembers the centre of the last room it carved and turns it into stairs.
 
 {{diff actions.go}}
 
-- `TakeStairsAction` is `Impossible` unless the player stands exactly on the stairs.
-
 {{diff entity.go}}
-
-- `Spawn` now accepts a `nil` map: "copy the template, place it later". `NewGame` spawns the player that way and lets `GenerateFloor` do the placing.
 
 {{diff setup_game.go}}
 
 {{diff engine.go}}
 
-- The engine holds the world and prints "Dungeon level: N" under the health bar.
-
 {{diff saveload.go}}
-
-- The save gains the `GameWorld`, otherwise a loaded game would forget its depth.
 
 {{diff input.go}}
 
 {{diff colors.go}}
 
-!!! Run it: "Dungeon level: 1" under the bar. Explore until you find the `>`, stand on it, press `>`: "You descend the staircase." and a brand new level 2. Press `>` elsewhere: "There are no stairs here."
+--- end
+
+%%% Remove the line that appends the player to the new map's entities in `GenerateFloor`. You descend, the map is generated around the player's position, but the `@` is never drawn and monsters ignore you: you exist in the engine but not in the world. The two lists must agree.

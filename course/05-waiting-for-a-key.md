@@ -1,11 +1,22 @@
 # Step 5 · Waiting for a key
 
-"Press any key to quit" is a lie in step 4: moving the mouse or resizing the window also ends the program, because `PollEvent` returns for *every* event. We loop until the event is a key.
+### The problem
+
+"Press any key" is a lie in step 4: move the mouse or resize the window and the program ends, because `PollEvent` returns for *every* event the terminal reports. We only want keys.
+
+tcell hands us events as values of the interface type `tcell.Event`; the concrete type says what happened: `*tcell.EventKey`, `*tcell.EventMouse`, `*tcell.EventResize`. So the question is how to ask "is this a key?" and keep waiting otherwise.
+
+>>> Loop on `PollEvent` until the event is a `*tcell.EventKey`, then return. Look up the two-result form of a type assertion.
+
+!!! Resizing the window or moving the mouse no longer quits. A key does.
+
+--- reveal
 
 {{diff main.go}}
 
-- `for { ... }` with no condition is Go's infinite loop. It only ends through `return`.
-- `ev := screen.PollEvent()` gives us an event of interface type `tcell.Event`. The concrete type depends on what happened: `*tcell.EventKey`, `*tcell.EventMouse`, `*tcell.EventResize`.
-- `ev.(*tcell.EventKey)` is a **type assertion**: "is this event a key event?". With two results, `_, ok :=`, it never panics: `ok` is `true` when the assertion holds. We ignore the key itself (`_`) and return; any other event loops again.
+- `for { ... }` with no condition is Go's infinite loop; it only ends through `return`.
+- `ev.(*tcell.EventKey)` is a **type assertion**: "is this event a key event?". With two results, `_, ok :=`, it never panics: `ok` is `true` when the assertion holds. The key itself is ignored (`_`) for now.
 
-!!! Run it: resizing the window or moving the mouse no longer quits. A key does.
+--- end
+
+%%% Use the one-result form, `key := ev.(*tcell.EventKey)`, and resize the window: the program panics with `interface conversion`. The two-result form exists so that a wrong guess is a `false`, not a crash.

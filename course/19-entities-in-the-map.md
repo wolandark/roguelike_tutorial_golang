@@ -1,28 +1,31 @@
 # Step 19 · Entities live in the map
 
-Two things at once, because they belong together. First, the entity list moves from the engine into the map: a level owns its inhabitants, and later levels will come and go. Second, monsters become solid: movement checks for a blocking entity, and `Spawn` puts the new entity straight into the map.
+### The problem
+
+Two things are wrong at once. Monsters are not solid: `MovementAction` checks tiles but not entities. And the entity list lives in the engine, while everything else about a level lives in the map; in chapter 11 levels will be created and thrown away, and the inhabitants must go with them. The fix for the second decides the shape of the first: once the map owns its entities, "is something standing here?" is a question the map can answer, and `Spawn` can put a new entity straight into it.
+
+>>> Move the entity slice from `Engine` into `GameMap`. Give `Spawn` the map as a parameter and append the clone to it. Add `GetBlockingEntityAt(x, y) *Entity` to the map, make `MovementAction` refuse a destination with a blocking entity, and draw entities in `GameMap.Render` (only visible ones, on the lit floor colour). `GenerateDungeon` should receive the map instead of creating it, so the player can be spawned into it first.
+
+!!! Bump into the orc; you stop. The `@` and the monsters are drawn on the yellow lit floor.
+
+--- reveal
 
 {{diff entity.go}}
 
-- `Spawn` takes the map and appends the clone to `m.Entities`. Because `clone` is a local variable whose address escapes, Go allocates it on the heap; you never think about that.
+- `clone` is a local variable whose address escapes into the map; Go allocates it on the heap for you.
 
 {{diff gamemap.go}}
 
-- `GetBlockingEntityAt` is a linear scan over the entities. A level has a few dozen; that is plenty fast.
-- `Render` draws the entities after the tiles, only when visible, using the *lit* floor colour as background so the glyph sits on its tile.
+- `GetBlockingEntityAt` is a linear scan. A level has a few dozen entities; that is plenty fast, and a spatial index would be premature.
 
 {{diff engine.go}}
 
-- The engine keeps just the player and the map.
-
 {{diff actions.go}}
-
-- A third check in `MovementAction`: the destination must be free of blocking entities.
-
-The generator no longer creates the map; it receives it, so the player can be spawned into it first:
 
 {{diff procgen.go}}
 
 {{diff main.go}}
 
-!!! Run it: bump into the orc; you stop. The `@` and the monsters are drawn on the yellow lit floor.
+--- end
+
+%%% Set `BlocksMovement: false` on the orc template. You walk through orcs again but not trolls. The flag is per template, which is how ghosts or items will work: same entity type, different flag.

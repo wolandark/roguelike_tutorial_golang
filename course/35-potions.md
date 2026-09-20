@@ -1,49 +1,41 @@
 # Step 35 · Potions
 
-Two new components: an **Inventory** for things that can carry, and a **Consumable** for things that can be used up. A health potion is an entity with a consumable and no fighter. This step puts potions on the floor; picking them up is the next step.
+### The problem
 
-Create `inventory.go`:
+An item is an entity lying on the floor until someone carries it. Two new abilities, so two new components: an **Inventory** for entities that can carry, and a **Consumable** for entities that can be used up. The consumable is the interesting design: what a potion *does* is the potion's business, not the inventory's, so `Consumable` is an interface. It answers two questions: what should happen when the player selects me (usually "perform an item action now", but chapter 9 will need "ask for a target first", so the answer can be an action *or* a handler), and what my effect is when activated.
+
+This step puts potions on the floor and defines the components; picking them up is the next step, so nothing changes in play yet.
+
+>>> Create `inventory.go` (capacity, items, `Remove`, `Drop`) and `consumable.go` (the `Consumable` interface with `GetAction` returning `(Action, EventHandler)` and `Activate`; a `consume` helper; `HealingConsumable`). Add `Inventory` and `Consumable` fields to `Entity` and copy the inventory in `Spawn`. Add `Fighter.Heal(amount) int` returning what was actually recovered. Add `ItemAction` (item, target position; `Perform` calls `Activate`). Add a `healthPotion` template, `EntityAt` and `RemoveEntity` to the map, and place 0 to 2 potions per room.
+
+!!! Purple `!` in some rooms. You can walk over them; nothing happens yet.
+
+--- reveal
 
 {{file inventory.go}}
 
-- `Remove` deletes an item from the slice while keeping order: everything before it, then everything after it, appended together. `inv.Items[:i]` and `inv.Items[i+1:]` are slice expressions; `...` spreads the second into `append`'s arguments.
-- `Drop` puts an item back on the map at the owner's feet.
-
-Create `consumable.go`:
+- `Remove` deletes from a slice while keeping order: `append(items[:i], items[i+1:]...)`.
 
 {{file consumable.go}}
 
-- A consumable answers two questions. `GetAction`: what should happen when the player selects me in the inventory? For a potion, "perform an `ItemAction` now". The second return value exists because some items (chapter 9) must ask for a target first and return an event handler instead. `Activate` is the effect itself.
-- `HealingConsumable` heals through the new `Fighter.Heal`, refuses with `Impossible` at full health, and finally `consume`s itself out of the inventory.
-
-The entity gets both components, and `Spawn` copies the inventory (and its slice) too:
+- `HealingConsumable.Activate` refuses with `Impossible` at full health, so a wasted potion costs neither the potion nor the turn, and calls `consume` only on success.
 
 {{diff entity.go}}
 
-`Heal` returns how much was **actually** recovered, so the message can be honest:
-
 {{diff fighter.go}}
-
-`ItemAction` carries the item to use, plus a target position for later:
 
 {{diff actions.go}}
 
-Templates: the player can carry 26 items (one per letter), and here is the potion:
-
 {{diff entity_factories.go}}
-
-The map gets two helpers, `EntityAt` (anything on a tile) and `RemoveEntity` (for pickup, next step):
 
 {{diff gamemap.go}}
 
-Room generation scatters 0 to 2 potions per room:
-
 {{diff procgen.go}}
-
-- `randomTile` factors out the "random floor cell inside this room" arithmetic that was inline before.
 
 {{diff main.go}}
 
 {{diff colors.go}}
 
-!!! Run it: purple `!` in some rooms. You can walk over them; nothing happens yet.
+--- end
+
+%%% Remove the inventory copy from `Spawn` and (after step 37) pick up a potion: the template's inventory grows too, and every later player would start with it. Same trap as the Fighter, one component later.

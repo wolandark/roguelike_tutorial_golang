@@ -1,21 +1,25 @@
 # Step 43 · The main menu
 
-A title screen with new game, continue and quit. It is one more event handler, and a **popup** is another: it draws its parent dimmed, writes one line, and returns the parent on any key. The setup code moves out of `main.go` into a `NewGame` function next to the menu.
+### The problem
 
-Create `setup_game.go`:
+Loading automatically on start is fine for testing and wrong for a game: the player should choose between a new game and continuing, and be told when there is nothing to continue. That is a title screen, one more handler, and a **popup** for the message, another handler that draws its parent dimmed and closes on any key. It is also the moment to move set-up code out of `main.go`, which from now on is only the loop.
+
+>>> Create `setup_game.go` with `NewGame()` (the set-up from `main.go`), a `MainMenu` handler with `n`/`c`/`q` (and Escape), and a `PopupMessage` handler with a parent and a line of text. Continuing with no save (`errors.Is(err, os.ErrNotExist)`) or a bad save shows a popup. `main.go` starts from `MainMenu{}`.
+
+!!! The title screen. Press `c` before ever saving: the screen dims and "No saved game to load." appears; any key returns to the menu. `n` starts a game; Escape saves; `c` next time continues it.
+
+--- reveal
 
 {{file setup_game.go}}
 
-- `NewGame` is the setup that was in `main.go`.
-- `MainMenu` is a handler with no state, so it is declared as an empty struct and used as a value (`MainMenu{}`), and its methods have value receivers.
-- `OnRender` draws a block-letter title (a slice of strings) and three options. `HandleEvent` starts a new game on `n`, loads on `c`, quits on `q` or Escape.
-- Loading can fail two ways. `errors.Is(err, os.ErrNotExist)` asks whether the error *is* "file not found" (also seeing through wrapped errors); that gets "No saved game to load.". Any other error gets its own message. Both show a `PopupMessage`.
-- `PopupMessage` renders its parent, then `dimScreen` walks every cell with `screen.Size()` and re-sets it with `style.Dim(true)`, then writes one centred line. Any key returns the parent.
+- `MainMenu` has no state, so it is an empty struct used as a value with value receivers.
+- `errors.Is(err, os.ErrNotExist)` asks whether the error *is* "file not found", seeing through wrapping.
+- `dimScreen` walks every cell with `screen.Size()` and re-sets it with `style.Dim(true)`.
 
 {{diff main.go}}
 
-- The loop starts from `MainMenu{}` now, and `main.go` is nothing but the loop. It will not change again.
-
 {{diff colors.go}}
 
-!!! Run it: the title screen. Press `c` before ever saving: the screen dims and "No saved game to load." appears; any key returns to the menu. `n` starts a game; Escape saves and brings you back to the shell; `c` next time continues it.
+--- end
+
+%%% Make `PopupMessage.HandleEvent` return `p` for every event. The popup can never be closed and the only way out is Ctrl-C, which the popup also ignores, so you must kill the terminal. Every modal handler needs an exit; check yours before you run it.

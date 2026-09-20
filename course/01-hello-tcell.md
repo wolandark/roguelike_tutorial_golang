@@ -1,16 +1,34 @@
 # Step 1 · Hello, tcell
 ## Chapter: Hello, tcell
 
-The whole course grows one program, and this is the seed: ten lines that open the terminal in "game mode", draw an `@`, wait for something to happen and hand the terminal back. Type it into `main.go`.
+### In this chapter
+
+A roguelike is a program that owns the whole terminal: no scrolling text, no prompt, just a grid of cells it draws into and keys it reacts to one at a time. Before any dungeon, we need to be able to do exactly that, and to hand the terminal back in one piece afterwards. This chapter gets there in five small steps, and by the end of it you will have met the shape that every later step keeps: a `run` function that does the work and a `main` that reports.
+
+### The problem
+
+Print `@` with `fmt.Println` and you get an `@` at the bottom of a scrolling log, with a prompt after it. That is not a game screen. We need three things a normal program never asks for: to draw at a *position*, to be told about a key *the moment it is pressed* (no Enter), and to leave no trace when we quit. Terminals can do all of this through escape sequences, but the details differ per terminal and platform, so we use a library that knows them: [tcell](https://github.com/gdamore/tcell).
+
+The question for this step is only: what is the smallest program that takes the terminal over, draws one character, and gives it back?
+
+>>> Make a `main.go` that opens a tcell screen, draws an `@` somewhere, waits for anything to happen, and restores the terminal. You will need `go get github.com/gdamore/tcell/v2` first (note the `/v2`). The tcell functions you need are `NewScreen`, and on the screen: `Init`, `SetContent`, `Show`, `PollEvent`, `Fini`. Ignore errors for now.
+
+!!! A blank screen with a single `@`; any key, click or resize ends the program and your shell is back exactly as it was.
+
+--- reveal
 
 {{file main.go}}
 
-- `import "github.com/gdamore/tcell/v2"` brings in tcell, the library that talks to the terminal for us. The **`/v2`** at the end is part of the path; without it you get the old, incompatible v1. You need it in your module first: `go get github.com/gdamore/tcell/v2`.
-- `tcell.NewScreen()` returns two values: a screen and an error. `screen, _ :=` keeps the first and throws the second away with the blank identifier `_`. Ignoring errors is a bad habit that we fix in the very next step; for now it keeps the program short.
-- `screen.Init()` is the call that takes over the terminal: raw mode (keys arrive one at a time, nothing is echoed) and the *alternate screen*, the one `vim` and `less` use, so your shell history is untouched.
-- `screen.SetContent(10, 5, '@', nil, tcell.StyleDefault)` puts the character `'@'` at column 10, row 5. Row 0 is the **top** of the screen. `'@'` with single quotes is a `rune`, one character. The `nil` is for combining characters (accents); we never need it. `tcell.StyleDefault` is the terminal's plain colours.
-- Nothing is visible until `screen.Show()` copies tcell's buffer to the real terminal.
-- `screen.PollEvent()` blocks until the terminal reports *anything*: a key, a mouse move, a resize. We ignore what it was.
-- `screen.Fini()` undoes `Init()`. Skip it and your shell is left without echo and with a hidden cursor (if that ever happens: type `reset`, Enter).
+- `import "github.com/gdamore/tcell/v2"`: the **`/v2`** is part of the path; without it you get the old, incompatible v1.
+- `tcell.NewScreen()` returns two values, a screen and an error. `screen, _ :=` keeps the first and throws the second away with the blank identifier `_`. That is a bad habit, and the next step is about why.
+- `screen.Init()` takes over the terminal: raw mode (keys arrive one at a time, nothing is echoed) and the *alternate screen*, the one `vim` and `less` use, so your shell history is untouched.
+- `screen.SetContent(10, 5, '@', nil, tcell.StyleDefault)` puts the rune `'@'` at column 10, row 5. Row 0 is the **top**. The `nil` is for combining characters (accents), never needed here. `tcell.StyleDefault` is the terminal's plain colours.
+- Nothing is visible until `screen.Show()` copies tcell's buffer to the real terminal. tcell keeps a buffer so that it can send only what changed.
+- `screen.PollEvent()` blocks until the terminal reports *anything*.
+- `screen.Fini()` undoes `Init()`.
 
-!!! Run it: `go run .` (or ▶ play here). A blank screen with an `@`; any key, click or resize ends the program and your shell is back as it was.
+--- end
+
+%%% Delete the `screen.Fini()` line and run it. When the program ends your shell has no echo and no cursor. Type `reset` and press Enter to fix it. Now you know what `Fini` is for, and why step 3 will make it impossible to forget.
+
+%%% Change `'@'` to `"@"` (double quotes). The compiler refuses: `"@"` is a `string`, `'@'` is a `rune`, one character, and `SetContent` wants a rune.

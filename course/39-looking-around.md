@@ -1,13 +1,21 @@
 # Step 39 · Looking around
 
-The next two scrolls need the player to pick a target. That needs a cursor mode: move a highlight over the map with the keyboard or the mouse, confirm with Enter or a click. Built once, the same mode gives us a `/` **look** command for free, so that is what this step adds; the scrolls come next.
+### The problem
+
+Confusion and fireball need the player to choose a cell. That is a mode: a highlight moves over the map with the keys or the mouse, Enter or a click confirms, anything else cancels. What happens with the chosen cell differs per use (look at it, throw a scroll at it), so the handler takes a **callback**, a function value that receives the cell and returns the next handler. Built once, the mode gives a `/` look command for free, which is the version this step adds; the scrolls come next.
+
+>>> Add a `SelectIndexHandler` with `Engine` and `OnSelect func(x, y int) EventHandler`. The cursor is `Engine.MouseX/MouseY`, starting on the player. `OnRender` draws the game and flips the cursor cell to reverse video (read it back with `GetContent`). `HandleEvent`: mouse moves the cursor and a left click selects; movement keys move it (times 5, 10, 20 with Shift, Ctrl, Alt), clamped to the map; Enter selects; anything else returns to the main game. Add `NewLookHandler` whose callback just returns to the game, bound to `/`.
+
+!!! Press `/`, move the highlight with the arrows or `hjkl` (try Shift-arrow), and read the names line as it passes over monsters. Enter or Escape returns.
+
+--- reveal
 
 {{diff input.go}}
 
-- `SelectIndexHandler` holds the engine and an `OnSelect` callback: a **function value** that receives the chosen tile and returns the next handler. What happens with the tile is entirely up to whoever created the handler.
-- The cursor *is* `Engine.MouseX/MouseY`; `NewSelectIndexHandler` starts it on the player.
-- `OnRender` draws the game, then reads the cell under the cursor back with `screen.GetContent` and rewrites it with `style.Reverse(true)`: a highlight without knowing what is there.
-- `HandleEvent` uses a type switch on the event. Mouse movement moves the cursor; a click (`e.Buttons()&tcell.Button1 != 0`, a bit test) selects. Movement keys move it, and holding Shift, Ctrl or Alt multiplies the step by 5, 10 or 20 (`e.Modifiers()` is a bit set too). `max` and `min` clamp the cursor to the map. Enter selects; any other key cancels back to the main game.
-- `NewLookHandler` is the first use: its callback simply returns to the game. The names line from step 32 does the rest.
+- `screen.GetContent` returns the rune, combining runes, style and width of a cell; we keep the rune and style and rewrite the cell with `style.Reverse(true)`.
+- `e.Buttons()&tcell.Button1 != 0` and `e.Modifiers()&tcell.ModShift != 0` are bit tests on bit sets.
+- `NewLookHandler` passes a **function literal** as the callback; the names line from step 32 does the rest.
 
-!!! Run it: press `/`, move the highlight with the arrows or `hjkl` (try Shift-arrow), and read the names line as it passes over monsters. Enter or Escape returns to the game.
+--- end
+
+%%% Make the callback in `NewLookHandler` return `h` (the select handler itself) instead of the main game. Enter no longer leaves look mode; only a non-movement key does. The callback decides what "select" means, including "keep selecting".
