@@ -1,10 +1,18 @@
 # Step 26 · Render order
 
-A monster standing on a corpse should be drawn on top of it. Whatever is drawn last wins, so the entities are sorted before drawing: corpses first, later items, then living actors.
+### The problem
+
+Kill an orc, step onto its corpse, and let a troll follow you: sometimes the `%` is drawn over the troll. Entities are drawn in list order, and whatever is drawn last wins. We want corpses at the bottom, items (chapter 8) above them, living actors on top. That is a sort key per entity and a sort before drawing, but the sort must not disturb the list itself, because list order also decides who acts first.
+
+>>> Add a `RenderOrder` type with three constants (corpse, item, actor), a field on `Entity`, set it in the templates and in `Die`, and sort a *copy* of the entity list by it in `GameMap.Render` before drawing.
+
+!!! Kill an orc, step onto its corpse, let a troll follow you: the living are always drawn over the `%`.
+
+--- reveal
 
 {{diff entity.go}}
 
-- `type RenderOrder int` is a new named type based on `int`, and the `const` block with **`iota`** numbers its values 0, 1, 2. `iota` counts up within a `const` block; only the first line needs the type and value.
+- `type RenderOrder int` is a named type based on `int`, and the `const` block with **`iota`** numbers its values 0, 1, 2. `iota` counts up within a `const` block; only the first line needs the type and value.
 
 {{diff fighter.go}}
 
@@ -12,7 +20,9 @@ A monster standing on a corpse should be drawn on top of it. Whatever is drawn l
 
 {{diff gamemap.go}}
 
-- `append([]*Entity(nil), m.Entities...)` makes a *copy* of the slice (`...` spreads a slice into variadic arguments). We sort the copy so the game's own order, which decides who acts first, stays untouched.
-- `sort.SliceStable` takes the slice and a **function literal** (an anonymous function, also called a closure) that says whether element `i` should come before element `j`. *Stable* keeps equal elements in their original order.
+- `append([]*Entity(nil), m.Entities...)` copies the slice (`...` spreads a slice into variadic arguments).
+- `sort.SliceStable` takes the slice and a **function literal** (a closure) that says whether element `i` sorts before element `j`. *Stable* keeps equal elements in their original order, so two orcs on one cell do not flicker.
 
-!!! Run it: kill an orc, then step onto its corpse and let a troll follow you: living things are always drawn over the `%`.
+--- end
+
+%%% Sort `m.Entities` itself instead of a copy. Nothing looks different, but the player is now drawn last *and acts last* among equals; in chapter 8, dropping an item and picking it up again reorders the list under you. Sorting a copy keeps drawing and logic separate.

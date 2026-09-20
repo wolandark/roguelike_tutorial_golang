@@ -1,35 +1,35 @@
 # Step 49 · Wielding and wearing
 
-The last step: attack and defense become base values plus equipment bonuses, selecting gear in the inventory equips it, the menu marks worn items with `(E)`, and you start with a dagger and leather armour.
+### The problem
+
+Gear exists but does nothing. Attack and defense must become base values plus bonuses, and because the bonuses need the inventory, the sums belong on `Entity`, not on `Fighter`. Selecting gear in the inventory should equip or remove it, the menu should mark worn items, dropping something worn should take it off first, and the player should start with a dagger and leather armour so the numbers stay what they were.
+
+>>> Rename the Fighter fields to `BaseDefense`/`BasePower`; add `Power()` and `Defense()` methods on `Entity` that add the bonuses, and use them in melee, the character sheet and the level-up menu (base values there). Add `EquipAction`; make `useItem` return it for equippables; mark worn items `(E)` in the menu; unequip in `Drop`. Lower the player to power 2 / defense 1 and give them a dagger and leather armour, equipped silently, in `NewGame`.
+
+!!! `i` shows `(a) Dagger (E)` and `(b) Leather Armor (E)`; `c` shows attack 4, defense 2. Find a sword on floor 4 or deeper and equip it: "You remove the Dagger." then "You equip the Sword." in one turn.
+
+--- reveal
 
 {{diff fighter.go}}
 
-- `Defense` and `Power` are renamed `BaseDefense` and `BasePower`, and `Power()` and `Defense()` become **methods on `Entity`**, because they need the inventory to add the bonuses. Level-ups raise the base values.
-
 {{diff entity_factories.go}}
-
-- The player's own stats drop to power 2 / defense 1; the starting dagger (+2) and leather armour (+1) bring them back to 4 / 2.
 
 {{diff actions.go}}
 
-- Melee uses the methods now. `EquipAction` is one call to `ToggleEquip`.
-
 {{diff inventory.go}}
 
-- Dropping something you wear takes it off first.
-
 {{diff input.go}}
-
-- `useItem` returns an `EquipAction` for gear, and asks the consumable otherwise. The inventory shows `(E)`. The level-up menu shows base values (that is what it changes); the character sheet shows totals.
 
 {{diff level.go}}
 
 {{diff setup_game.go}}
 
-- The starting kit: `Spawn(nil, ...)` copies a template without placing it; the two items go straight into the inventory and are equipped silently.
+- `Spawn(nil, ...)` copies a template without placing it; the two items go straight into the inventory.
 
-!!! Run it: `i` shows `(a) Dagger (E)` and `(b) Leather Armor (E)`; `c` shows attack 4, defense 2. Find a sword on floor 4 or deeper and equip it: "You remove the Dagger." then "You equip the Sword." in one turn.
+--- end
+
+%%% Give the dagger `DefenseBonus: 1` too. `Defense()` sums both slots, so the dagger now also protects, without any change to the sums: the slot loop already covers every worn item.
 
 ## You built a roguelike
 
-About 2,300 lines of Go, every one of them added for a reason you have read. Some directions from here: doors and traps (new `Tile` values plus a little `procgen`), an archer AI that keeps its distance (reuse `FindPath`), a ranged weapon for the player (reuse `SelectIndexHandler`), a version number in `saveData`, or a graphical front end: the engine only touches tcell through `tcell.Screen` and `tcell.Event`, so an [Ebiten](https://ebitengine.org/) renderer with tiles is within reach. Now go make it *yours*. 🗡️🌸
+About 2,300 lines of Go, and you argued your way to every one of them before seeing it. Some directions from here: doors and traps (new `Tile` values and a little `procgen`), an archer AI that keeps its distance (reuse `FindPath`), a ranged weapon for the player (reuse `SelectIndexHandler`), a version number in `saveData`, or a graphical front end: the engine only touches tcell through `tcell.Screen` and `tcell.Event`, so an [Ebiten](https://ebitengine.org/) renderer with tiles is within reach. Now go make it *yours*. 🗡️🌸

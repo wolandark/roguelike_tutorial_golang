@@ -1,12 +1,21 @@
 # Step 7 · Reading the arrow keys
 
-Now the update phase: arrow keys change the position, Escape quits.
+### The problem
+
+We have a key event and ignore what key it was. tcell tells us through `ev.Key()`, which returns named constants for special keys (`tcell.KeyUp`, `tcell.KeyEscape`, ...). One thing to know about the terminal first: in raw mode Ctrl-C is no longer a signal that kills the program; it arrives as an ordinary key. If we do not handle it, the player is trapped. So we need arrows to move and two keys to quit.
+
+>>> Branch on `ev.Key()`: the four arrows change `playerX`/`playerY` (remember row 0 is at the top), Escape and Ctrl-C return. Other keys do nothing.
+
+!!! The `@` moves with the arrows. It can walk off the screen, since there is no map yet. Escape or Ctrl-C quits.
+
+--- reveal
 
 {{diff main.go}}
 
-- `ev, ok := screen.PollEvent().(*tcell.EventKey)` combines polling and the type assertion. If it is not a key, `continue` jumps straight to the next loop iteration (which redraws).
-- `switch ev.Key()` branches on which key it was. tcell names special keys: `tcell.KeyUp`, `KeyDown`, `KeyLeft`, `KeyRight`, `KeyEscape`, `KeyCtrlC`. Go's `switch` does not fall through; each `case` is its own branch, and `case tcell.KeyEscape, tcell.KeyCtrlC:` lists two values for one branch.
-- `playerY--` for *up*: row 0 is at the top, so up means a smaller y.
-- Why handle Ctrl-C ourselves? In raw mode the terminal no longer turns it into a signal; it arrives as an ordinary key. Treating it as quit is friendlier than trapping the player.
+- `ev, ok := screen.PollEvent().(*tcell.EventKey)` combines polling and the assertion; `continue` on a non-key jumps to the next iteration, which redraws.
+- `switch ev.Key()` branches on the key. Go's `switch` does not fall through: each `case` is its own branch, and `case tcell.KeyEscape, tcell.KeyCtrlC:` lists two values for one branch.
+- `playerY--` for *up*, because up means a smaller row number.
 
-!!! Run it: the `@` moves with the arrows. You can walk off the screen; there is no map yet. Escape or Ctrl-C quits.
+--- end
+
+%%% Remove the `tcell.KeyCtrlC` case and press Ctrl-C while the game runs. Nothing happens: that is raw mode. Escape still works. Put it back.

@@ -1,22 +1,24 @@
 # Step 28 · Pathfinding
 
-A monster that wants to reach you needs a route around walls. **Dijkstra's algorithm** finds the cheapest one: flood outwards from the monster, always expanding the cheapest tile reached so far, until the player's tile is reached. Go's standard library has the priority queue this needs in `container/heap`; we only supply the five small methods it asks for.
+### The problem
 
-Create `pathfinding.go`:
+A straight step towards you stops at the first wall. A monster needs a route, and the classic tool is **Dijkstra's algorithm**: flood outwards from the monster, always expanding the cheapest cell reached so far, until you reach the player's cell; then walk back along the recorded "came from" links. "Cheapest" needs a priority queue, and Go's standard library has one in `container/heap`, which asks you to supply five small methods on your own slice type. Two tuning choices make monsters behave well: diagonal steps cost a little more than straight ones (paths prefer straight lines), and a cell with another monster on it costs a lot more (monsters flow around each other instead of queueing).
+
+>>> Create `pathfinding.go` with `FindPath(m, x1, y1, x2, y2) [][2]int` implementing Dijkstra over the eight neighbours, using `container/heap` on a `pathQueue` of `pathNode{idx, cost}`; straight steps cost 2, diagonal 3, occupied cells +10. Make `HostileEnemy` take the first step of the path instead of the straight step.
+
+!!! Monsters round corners and pour through doorways to get to you. Retreat into a corridor and watch them line up.
+
+--- reveal
 
 {{file pathfinding.go}}
 
-- `cost` and `prev` are one entry per tile, like the map's own slices. `-1` means "not reached yet".
-- `pq := &pathQueue{{idx: start, cost: 0}}` is a pointer to a slice with one node in it. `heap.Push` and `heap.Pop` keep it ordered by cost through our `Less` method, so `heap.Pop(pq).(pathNode)` is always the cheapest tile; the type assertion is needed because the heap works with `any`.
-- The nested loops visit the eight neighbours. Straight steps cost 2, diagonals 3 (so paths prefer straight lines), and a tile with a blocking entity costs 10 extra, so monsters flow *around* each other instead of queueing in a corridor.
-- `if cur.cost > cost[cur.idx] { continue }` drops stale queue entries: a tile can be pushed twice if a cheaper route is found later.
-- After the loop, walking the `prev` links from the goal back to the start gives the path in reverse; the final loop reverses it in place with a parallel assignment `path[i], path[j] = path[j], path[i]`.
-- `pathQueue` implements `heap.Interface`: `Len`, `Less`, `Swap` (from `sort.Interface`) plus `Push` and `Pop`. `Push` and `Pop` need pointer receivers because they change the slice's length. `x.(pathNode)` converts the `any` back to our type.
-
-The AI follows the path:
+- `cost` and `prev` are one entry per cell, like the map's own slices; `-1` means "not reached yet".
+- `heap.Pop(pq).(pathNode)` is always the cheapest cell, thanks to our `Less`; the type assertion is needed because the heap works with `any`. Stale queue entries (a cell pushed twice, the second time cheaper) are skipped by `if cur.cost > cost[cur.idx]`.
+- The path is rebuilt backwards from the goal and reversed in place with a parallel assignment.
+- `pathQueue` implements `heap.Interface`: `Len`, `Less`, `Swap`, `Push`, `Pop`. `Push` and `Pop` need pointer receivers because they change the slice's length.
 
 {{diff ai.go}}
 
-- `path[0]` is the first step; the movement is the difference between it and the monster's position.
+--- end
 
-!!! Run it: monsters round corners and pour through doorways to get to you. Retreat into a corridor and watch them line up.
+%%% Set `blockedCost` to 0. Monsters now path *through* each other's cells and jam in corridors, each waiting for the one in front. Then set diagonal cost to 2 (same as straight): paths become jagged staircases, because diagonals are never worse than straight steps.

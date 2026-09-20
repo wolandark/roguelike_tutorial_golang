@@ -1,11 +1,21 @@
 # Step 4 · Drawing text
 
-`SetContent` draws one character. A string is a loop of characters, and a Go string is a sequence of *bytes*, so we convert it to runes first.
+### The problem
+
+`SetContent` draws one character. We want to write a sentence. A string in Go is a sequence of *bytes*, and a character like `é` or `┤` is more than one byte, so "one byte per cell" would put later characters in the wrong columns. We need to walk the string character by character.
+
+>>> Write `Hello, roguelike! Press any key to quit.` on row 1, starting at column 1, one character per cell. Hint: `range` over `[]rune(msg)`, not over `msg`.
+
+!!! The greeting on row 1, the `@` still on row 5.
+
+--- reveal
 
 {{diff main.go}}
 
-- `msg := "..."` declares a variable with `:=`, letting Go infer the type (`string`).
-- `for i, r := range []rune(msg)` loops over the characters. `[]rune(msg)` converts the string to a slice of runes; `range` then gives the index `i` and the rune `r`. Ranging over the string directly would give **byte** offsets, and a character like `┤` is three bytes, so later characters would land in the wrong cells. Ranging over `[]rune` keeps one character per cell.
-- `1+i` puts the first character in column 1 and each next one one cell to the right.
+- `msg := "..."` declares a variable with `:=`; Go infers the type (`string`).
+- `[]rune(msg)` converts the string to a slice of runes, one per character. `for i, r := range` gives the index and the rune. Ranging over the string itself would give **byte** offsets.
+- `1+i` puts the first character in column 1 and each next one one cell further right.
 
-!!! Run it: the greeting on row 1 and the `@` still on row 5.
+--- end
+
+%%% Change the message to `Héllo` and range over `msg` instead of `[]rune(msg)`. The `é` is followed by a gap: it is two bytes, so `i` jumps by two. Put `[]rune` back and the gap disappears.

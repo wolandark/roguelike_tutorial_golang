@@ -114,6 +114,26 @@ def markdown(src):
         if re.match(r"^@@BLOCK\d+@@$", ln):
             flush()
             out.append(ln)
+        elif ln.startswith(">>> "):
+            # a "try it first" card: consecutive >>> lines are its paragraphs
+            flush()
+            paras = []
+            while i < len(lines) and lines[i].startswith(">>> "):
+                paras.append(inline(lines[i][4:])); i += 1
+            out.append('<div class="try"><div class="try-head">🧪 try it first</div>' +
+                       "".join(f"<p>{x}</p>" for x in paras) +
+                       '<div class="try-actions"><button class="ghost-btn try-load">load the previous step into the editor</button>'
+                       '<label class="try-always"><input type="checkbox" class="try-always-box"> always show solutions</label></div></div>')
+            continue
+        elif ln.strip() == "--- reveal":
+            flush()
+            out.append('<details class="reveal"><summary>show me how it is done in this step</summary><div class="reveal-body">')
+        elif ln.strip() == "--- end":
+            flush()
+            out.append('</div></details>')
+        elif ln.startswith("%%% "):
+            flush()
+            out.append(f'<div class="experiment">{inline(ln[4:])}</div>')
         elif re.match(r"^### Step (\d+):?\s*(.*)$", ln):
             flush()
             m = re.match(r"^### Step (\d+):?\s*(.*)$", ln)
