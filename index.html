@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cutesy Rogue — build a roguelike in Go, step by step</title>
+<link rel="stylesheet" href="js/xterm.css">
+<link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
+<header class="topbar">
+  <div class="mascot" id="mascot"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="a cute slime adventurer" role="img">
+    <path d="M14 78 C10 50, 22 26, 50 24 C78 26, 90 50, 86 78 C86 88, 14 88, 14 78 Z" fill="#ff8fc7" stroke="#4a3b52" stroke-width="2.5"/>
+    <ellipse cx="36" cy="40" rx="6" ry="4" fill="#ffd6ea"/>
+    <circle cx="38" cy="54" r="6" fill="#4a3b52"/>
+    <circle cx="62" cy="54" r="6" fill="#4a3b52"/>
+    <circle cx="40" cy="52" r="2" fill="#fff"/>
+    <circle cx="64" cy="52" r="2" fill="#fff"/>
+    <ellipse cx="28" cy="64" rx="6" ry="3.5" fill="#ff5fa8" opacity=".6"/>
+    <ellipse cx="72" cy="64" rx="6" ry="3.5" fill="#ff5fa8" opacity=".6"/>
+    <path d="M44 68 Q50 74 56 68" stroke="#4a3b52" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <text x="50" y="86" text-anchor="middle" font-family="monospace" font-size="15" font-weight="700" fill="#4a3b52">@</text>
+    <line x1="80" y1="56" x2="96" y2="22" stroke="#c9b8ff" stroke-width="5" stroke-linecap="round"/>
+    <line x1="80" y1="56" x2="96" y2="22" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+    <line x1="76" y1="52" x2="88" y2="60" stroke="#4a3b52" stroke-width="4" stroke-linecap="round"/>
+  </svg></div>
+  <div class="titles">
+    <h1>Cutesy Rogue</h1>
+    <p class="tagline">build a roguelike in Go + tcell, one step at a time — with your pocket slime</p>
+  </div>
+  <select id="themePick" class="theme-pick" title="pick a theme" aria-label="theme">
+    <optgroup label="cute">
+    <option value="sakura">🌸 sakura</option>
+    <option value="peach">🍑 peach</option>
+    <option value="matcha">🍵 matcha</option>
+    <option value="midnight">🌙 midnight</option>
+    <option value="latte">☕ catppuccin latte</option>
+    <option value="frappe">🧋 catppuccin frappé</option>
+    <option value="macchiato">🍮 catppuccin macchiato</option>
+    <option value="mocha">🍫 catppuccin mocha</option>
+    </optgroup>
+    <optgroup label="serious">
+    <option value="github-light">github light</option>
+    <option value="github-dark">github dark</option>
+    <option value="vscode-light">vscode light</option>
+    <option value="vscode-dark">vscode dark</option>
+    <option value="gruvbox-light">gruvbox light</option>
+    <option value="gruvbox-dark">gruvbox dark</option>
+    <option value="solarized-light">solarized light</option>
+    <option value="solarized-dark">solarized dark</option>
+    <option value="monokai">monokai</option>
+    <option value="dracula">dracula</option>
+    <option value="nord">nord</option>
+    <option value="ubuntu">ubuntu</option>
+    <option value="linux-tty">linux tty</option>
+    </optgroup>
+  </select>
+  <div class="progress-wrap" title="Your progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span id="progressLabel" class="progress-label">0 / 0</span>
+  </div>
+</header>
+
+<div id="speech" class="speech hidden"><span id="speechText"></span></div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <input id="search" type="search" placeholder="🔍 search steps…" autocomplete="off">
+    <ol id="navList"></ol>
+    <footer class="sidebar-foot">
+      <button id="resetBtn" class="ghost-btn">↺ reset progress</button>
+      <p>A Go + <a href="https://github.com/gdamore/tcell" target="_blank" rel="noopener">tcell</a> re-imagining of the <a href="https://rogueliketutorials.com/tutorials/tcod/v2/" target="_blank" rel="noopener">python-tcod roguelike tutorial</a>. Cute-fied with 💖.</p>
+    </footer>
+  </nav>
+
+  <main class="content" id="content">
+    <section id="welcome" class="lesson">
+      <h2>Hii there, adventurer! 👋</h2>
+      <p>Welcome to <strong>Cutesy Rogue</strong>! One program, grown one small step at a time into a complete, classic terminal roguelike in <strong>Go</strong> with <code>tcell</code>. Step 1 is ten lines. Every step after it adds a handful of lines, shows you exactly which ones, and explains each new piece of Go the first time you meet it: <code>defer</code>, methods, interfaces, embedding, closures, <code>container/heap</code>, <code>encoding/gob</code>... By the end you have written all ~2,300 lines yourself and you know why every one of them is there.</p>
+      <ul class="cute-list">
+        <li>📖 ~50 steps in 14 chapters, each a few lines with the reason for them</li>
+        <li>➕ the exact lines to add, as a diff against the previous step; the whole program is always one tab away</li>
+        <li>▶ <em>play here</em>: the server builds the step (with your edits!) and runs it in a live terminal in the page, or in your own terminal window</li>
+        <li>🏋️ an exercise at the end of every chapter, checked by hidden Go tests</li>
+        <li>⭐ check off steps and collect sparkles</li>
+      </ul>
+      <p>Every step is also a plain Go program you can run yourself from a clone of this repo:</p>
+      <div class="runbox"><code>go run ./steps/01-hello-tcell</code></div>
+      <p>You need <strong>Go 1.22+</strong> and, for your own terminal, at least <strong>80×50</strong> characters. Pick any part from the menu, or just follow the path in order!</p>
+      <button id="startBtn" class="big-btn">let's go! ⚔️</button>
+    </section>
+
+    <section id="lessonView" class="lesson hidden">
+      <div class="lesson-head">
+        <span class="lesson-num" id="lessonNum"></span>
+        <h2 id="lessonTitle"></h2>
+        <button id="doneBtn" class="big-btn done-btn">mark done 🌸</button>
+      </div>
+      <div id="lessonProse"></div>
+
+      <h3 class="code-heading" id="codeHeading">✏️ the program</h3>
+      <pre id="sampleOut" class="output sample hidden"></pre>
+      <div class="runbox">in your own terminal: <code id="runCmd"></code><button id="copyRunBtn" class="ghost-btn">copy</button></div>
+      <div class="editor-card">
+        <div class="editor-head">
+          <span class="dots"><i></i><i></i><i></i></span>
+          <div class="filetabs" id="fileTabs"></div>
+          <button id="copyCodeBtn" class="ghost-btn" title="copy this file">⧉ copy</button>
+          <button id="resetCodeBtn" class="ghost-btn" title="restore original code of this file">↺ restore</button>
+        </div>
+        <div class="code-wrap"><pre class="code-hl" aria-hidden="true"><code class="language-go"></code></pre><textarea id="codeArea" spellcheck="false" aria-label="Go code editor"></textarea><div class="resize-bar" title="drag to resize"></div></div>
+        <div class="editor-foot">
+          <button id="runBtn" class="big-btn run-btn only-stdout">▶ run it!</button>
+          <button id="playBtn" class="big-btn run-btn only-tui">▶ play here</button>
+          <button id="openBtn" class="big-btn run-btn alt-btn only-tui">🖥️ play in a terminal window</button>
+          <button id="runBtn2" class="ghost-btn only-tui" title="compile without running">🔨 just build</button>
+          <span class="hint" id="runHint"></span>
+        </div>
+        <pre id="outputBox" class="output hidden"></pre>
+        <div id="termWrap" class="term-wrap hidden">
+          <div class="term-head"><span>🕹️ your game, live — click inside to give it the keyboard</span><button id="termClose" class="ghost-btn">✕ stop</button></div>
+          <div id="term"></div>
+        </div>
+      </div>
+
+      <div class="lesson-nav">
+        <button id="prevBtn" class="big-btn nav-btn">← previous</button>
+        <button id="nextBtn" class="big-btn nav-btn">next →</button>
+      </div>
+
+      <div id="exercises"></div>
+      <template id="exerciseTpl">
+        <section class="exercise-card">
+          <h3 class="exercise-title">🏋️ your turn! <span class="exercise-sub">solve it yourself</span></h3>
+          <p class="exercise-prompt"></p>
+          <div class="editor-card exercise-editor">
+            <div class="editor-head">
+              <span class="dots"><i></i><i></i><i></i></span>
+              <span class="filechip ex-file">exercise.go</span>
+              <button class="ghost-btn ex-copy" title="copy this file">⧉ copy</button>
+              <button class="ghost-btn ex-reset" title="restore starter code">↺ starter</button>
+            </div>
+            <div class="code-wrap"><pre class="code-hl" aria-hidden="true"><code class="language-go"></code></pre><textarea class="ex-code" spellcheck="false" aria-label="Exercise code editor"></textarea><div class="resize-bar" title="drag to resize"></div></div>
+            <div class="editor-foot">
+              <button class="big-btn run-btn ex-check">✔ check my answer</button>
+              <span class="hint"></span>
+            </div>
+            <pre class="output hidden"></pre>
+          </div>
+        </section>
+      </template>
+    </section>
+  </main>
+</div>
+
+<script>window.Prism = { manual: true }; document.documentElement.dataset.theme = new URLSearchParams(location.search).get("theme") || localStorage.getItem("rogueCuteTheme") || "sakura";</script>
+<script src="js/prism-core.min.js"></script>
+<script src="js/prism-clike.min.js"></script>
+<script src="js/prism-go.min.js"></script>
+<script src="js/xterm.js"></script>
+<script src="data.js?v=2"></script>
+<script src="app.js?v=3"></script>
+</body>
+</html>

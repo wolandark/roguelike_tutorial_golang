@@ -1,0 +1,5 @@
+{
+ "base": "steps/11-walls-block-movement",
+ "file": "gamemap.go",
+ "prompt": "Give the map a border. Change `NewGameMap` so that the outermost row and column all around the map are `wall` tiles while everything inside stays `floor`. A tile is on the border when `x == 0`, `y == 0`, `x == width-1` or `y == height-1`."
+}
