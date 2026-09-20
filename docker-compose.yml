@@ -1,0 +1,19 @@
+services:
+  tutorial:
+    image: golang:alpine
+    container_name: cutesy-rogue
+    working_dir: /app
+    command: go run ./server
+    volumes:
+      - ./:/app
+      - gomodcache:/go/pkg/mod
+    ports:
+      - "8378:8378"
+    environment:
+      - GOCACHE=/tmp/gocache
+      - GOFLAGS=-buildvcs=false
+    init: true
+    # restart: unless-stopped
+
+volumes:
+  gomodcache:
