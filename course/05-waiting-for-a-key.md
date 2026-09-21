@@ -16,6 +16,7 @@ tcell hands us events as values of the interface type `tcell.Event`; the concret
 
 - `for { ... }` with no condition is Go's infinite loop; it only ends through `return`.
 - `ev.(*tcell.EventKey)` is a **type assertion**: "is this event a key event?". With two results, `_, ok :=`, it never panics: `ok` is `true` when the assertion holds. The key itself is ignored (`_`) for now.
+- Where did `screen.Fini()` go? Nowhere: it is still the `defer` from step 3, and it runs when `run` **returns**. The `return nil` inside the loop is that return, so the moment a key arrives the loop ends, `run` ends, and the deferred `Fini()` restores the terminal before `main` continues. This is the case `defer` was chosen for: the function now has its exit in the middle of a loop, and there is still exactly one `Fini`, in the place it was declared.
 
 --- end
 
