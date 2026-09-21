@@ -221,6 +221,13 @@ def build_steps():
         prose = re.sub(r"@@BLOCK(\d+)@@", lambda m: blocks[int(m.group(1))], markdown(body))
         parts.append({"slug": part, "track": "course", "chapter": chapter, "kind": "tui", "title": title,
                       "prose": prose, "files": files, "output": "", "base": f"steps/{part}"})
+    # label every chapter overview with the steps the chapter spans
+    opens = [i for i, p in enumerate(parts) if p["chapter"]]
+    for n, i in enumerate(opens):
+        last = (opens[n + 1] - 1) if n + 1 < len(opens) else len(parts) - 1
+        span = f"step {i + 1}" if last == i else f"steps {i + 1} to {last + 1}"
+        parts[i]["prose"] = parts[i]["prose"].replace("<h4>In this chapter</h4>",
+            f'<h4>In this chapter <span class="chapter-span">{span}</span></h4>', 1)
     return parts
 
 

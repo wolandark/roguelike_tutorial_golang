@@ -3,7 +3,7 @@
 
 ### In this chapter
 
-Every turn-based game is one loop: **draw** the world, **wait** for input, **update** the world, repeat. Three steps build it: the loop and a position for the `@`, then reading the arrow keys, then a small piece of structure, *actions*, that separates "which key" from "what happens". That separation looks like overkill for four arrows; it is what lets monsters, mice and menus produce the same movements later.
+Every turn-based game is one loop: **draw** the world, **wait** for input, **update** the world, repeat. This chapter builds it over three steps. Step 6 (this one) turns the program into that loop and gives the `@` a position, but nothing moves yet. Step 7 reads the arrow keys and makes it move. Step 8 adds a small piece of structure, *actions*, that separates "which key" from "what happens"; that looks like overkill for four arrows, and it is what lets monsters, mice and menus produce the same movements later.
 
 ### The problem
 
