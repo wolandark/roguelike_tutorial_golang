@@ -532,7 +532,7 @@ body {
 .exercise-editor .filechip { color: var(--code-ink); }
 .ex-code { min-height: 260px; }
 .exercise-title .ex-n { font-size: 0.8em; color: var(--muted); margin-right: 4px; }
-.exercise-title.passed::after { content: " 🎀"; }
+.exercise-title.passed::after { content: " 🏆"; }
 .output.pass { color: var(--out-ok); border-top-color: var(--green-deep); }
 .output.pass .out-label { color: var(--green); }
 

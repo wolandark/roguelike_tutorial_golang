@@ -59,7 +59,7 @@ function buildNav(filter = "") {
     if (state.done.has(l.slug)) {
       const star = document.createElement("span");
       star.className = "done-star";
-      star.textContent = "🌸";
+      star.textContent = "⚔️";
       btn.appendChild(star);
     }
     btn.addEventListener("click", () => openLesson(i));
@@ -76,7 +76,7 @@ function updateProgress() {
 
 /* ---------- mascot chatter ---------- */
 const CHATTER = [
-  "hi hi! pick a part! 🌸", "you're doing grr-eat! 💪",
+  "hi hi! pick a step! ⚔️", "you're doing grr-eat! 💪",
   "did you know? the @ is YOU!", "edit the code, i dare you~ 😼",
   "hjkl are your friends, so are the arrow keys!",
   "remember: gofmt everything 🧹", "orcs are just misunderstood 🧌",
@@ -93,7 +93,7 @@ $("mascot").addEventListener("click", () => squeak(CHATTER[Math.floor(Math.rando
 
 /* ---------- confetti ---------- */
 function confetti() {
-  const bits = ["🌸", "⭐", "💖", "⚔️", "🫧"];
+  const bits = ["⚔️", "🗡️", "💀", "🗝️", "🧪", "💰"];
   for (let i = 0; i < 28; i++) {
     const s = document.createElement("span");
     s.className = "confetti";
@@ -203,7 +203,7 @@ function updateDoneBtn() {
   const btn = $("doneBtn");
   const done = state.done.has(l.slug);
   btn.classList.toggle("is-done", done);
-  btn.innerHTML = done ? "check again? ✅" : "mark done 🌸";
+  btn.innerHTML = done ? "check again? ✅" : "mark done ⚔️";
 }
 
 $("doneBtn").addEventListener("click", () => {
@@ -215,8 +215,8 @@ $("doneBtn").addEventListener("click", () => {
     state.done.add(l.slug);
     confetti();
     squeak(state.done.size === LESSONS.length
-      ? "YOU BUILT A WHOLE ROGUELIKE?! 🏆💖 slime is SO proud!"
-      : "yay! +1 sparkle 🌸 next part?");
+      ? "YOU BUILT A WHOLE ROGUELIKE?! 🏆🗡️ slime is SO proud!"
+      : "yay! +1 loot 🗝️ next step?");
   }
   save(); updateProgress(); updateDoneBtn(); buildNav($("search").value);
 });
@@ -278,7 +278,7 @@ async function buildCode() {
       if (data.stderr) out += (out ? "\n" : "") + data.stderr;
       const ok = !data.buildErr && !data.stderr;
       showOutput(box, ok, out, "output 🐾", "uh-oh! 🙀");
-      squeak(ok ? "it runs! want to mark it done? 🌸" : "bugs are just misunderstood features… try fixing it! 🔧");
+      squeak(ok ? "it runs! want to mark it done? ⚔️" : "bugs are just misunderstood features… try fixing it! 🔧");
     } else {
       showOutput(box, data.ok, data.output, "it builds! 🐾", "uh-oh! 🙀");
       squeak(data.ok ? "it compiles! press ▶ to play it 🗡️" : "bugs are just misunderstood features… try fixing it! 🔧");
@@ -576,7 +576,7 @@ async function checkExercise(card, key) {
     });
     const data = await res.json();
     const passed = !!data.pass;
-    showOutput(box, passed, (data.output || "") + (passed ? "\n\nyour slime is proud! 💖" : ""), "pass! 🌸", "not quite yet 🙁");
+    showOutput(box, passed, (data.output || "") + (passed ? "\n\nyour slime is proud! 💖" : ""), "pass! 🗝️", "not quite yet 🙁");
     if (passed) {
       if (!state.exDone.has(key)) {
         state.exDone.add(key);
@@ -619,5 +619,5 @@ $("themePick").addEventListener("change", (e) => {
   const start = location.hash.slice(1);
   const i = LESSONS.findIndex((l) => l.slug === start);
   if (i >= 0) openLesson(i, false);
-  setTimeout(() => squeak(`welcome back! ${state.done.size}/${LESSONS.length} done, ${state.exDone.size} exercises solved 🌸`), 800);
+  setTimeout(() => squeak(`welcome back! ${state.done.size}/${LESSONS.length} done, ${state.exDone.size} exercises solved ⚔️`), 800);
 })();
