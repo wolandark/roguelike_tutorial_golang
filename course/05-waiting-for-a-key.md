@@ -2,11 +2,11 @@
 
 ### The problem
 
-"Press any key" is a lie in step 4: move the mouse or resize the window and the program ends, because `PollEvent` returns for *every* event the terminal reports. We only want keys.
+"Press any key" is a lie in step 4: move the mouse or resize the window and the program ends, because `PollEvent` returns for *every* event the terminal reports. The double `PollEvent` from step 1 only papered over the first of those, the resize tcell sends after `Init`. We only want keys, and the way to get that is to look at what arrived and keep waiting otherwise.
 
 tcell hands us events as values of the interface type `tcell.Event`; the concrete type says what happened: `*tcell.EventKey`, `*tcell.EventMouse`, `*tcell.EventResize`. So the question is how to ask "is this a key?" and keep waiting otherwise.
 
->>> Loop on `PollEvent` until the event is a `*tcell.EventKey`, then return. Look up the two-result form of a type assertion.
+>>> Replace the two `PollEvent` calls with a loop that polls until the event is a `*tcell.EventKey`, then returns. Look up the two-result form of a type assertion.
 
 !!! Resizing the window or moving the mouse no longer quits. A key does.
 

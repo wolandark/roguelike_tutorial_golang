@@ -20,6 +20,7 @@ func run() error {
 	screen.SetContent(10, 5, '@', nil, tcell.StyleDefault)
 	screen.Show()
 	screen.PollEvent()
+	screen.PollEvent()
 	return nil
 }
 
