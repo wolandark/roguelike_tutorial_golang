@@ -14,7 +14,7 @@
 
 - `msg := "..."` declares a variable with `:=`; Go infers the type (`string`).
 - `[]rune(msg)` converts the string to a slice of runes, one per character. `for i, r := range` gives the index and the rune. Ranging over the string itself would give **byte** offsets.
-- `1+i` puts the first character in column 1 and each next one one cell further right.
+- `1+i` is the column. `SetContent` draws exactly one cell, so the column has to move with the character: `i` is 0 for the first rune, 1 for the second, and so on, and the `1+` only shifts the whole line one cell in from the left edge. Write `SetContent(1, 1, r, ...)` with a fixed column and every rune lands on the same cell, each overwriting the last, leaving just the final `.` on screen. The same applies to a classic `for i := 0; i < len(runes); i++` loop: the index is what makes the text advance.
 
 --- end
 
