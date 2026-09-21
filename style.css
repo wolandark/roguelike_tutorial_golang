@@ -657,7 +657,8 @@ body {
 .pitfall::before { content: "🙀 common mistake: "; font-weight: 700; color: var(--code-hi); }
 
 /* ---------- two tracks ---------- */
-.nav-group { list-style: none; margin: 10px 0 4px; font-size: 0.72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; counter-reset: lesson; counter-increment: none; }
+.nav-group { list-style: none; margin: 10px 0 4px; font-size: 0.72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+#navList li.nav-group { counter-increment: none; }
 .output.sample { border-top: none; border: 2px solid var(--code-border); border-radius: 14px; margin: 8px 0 14px; max-height: 260px; }
 body[data-kind="stdout"] .only-tui { display: none; }
 body[data-kind="tui"] .only-stdout { display: none; }
