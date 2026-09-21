@@ -340,7 +340,11 @@ func handlePTY(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 			if err != nil { // EIO when the game exits and closes its side
-				status("[game exited] press ▶ to play again")
+				result := "exit status 0"
+				if werr := cmd.Wait(); werr != nil {
+					result = werr.Error()
+				}
+				status("[game exited: " + result + "] press ▶ to play again")
 				c.Close(websocket.StatusNormalClosure, "exited")
 				return
 			}
