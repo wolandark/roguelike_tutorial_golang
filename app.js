@@ -448,6 +448,14 @@ function enhanceSnippets(root) {
     btn.title = snip.classList.contains("diff") ? "copy the resulting code (added + unchanged lines)" : "copy this code";
     btn.addEventListener("click", () => copyText(snippetText(snip), cap.textContent.trim() || "code"));
     cap.appendChild(btn);
+    if (snip.classList.contains("diff") && snip.querySelector(".diff-line.far")) {
+      const tog = document.createElement("button");
+      tog.className = "ghost-btn snippet-toggle";
+      const label = () => { tog.textContent = snip.classList.contains("full") ? "changes only" : "whole file"; };
+      label();
+      tog.addEventListener("click", () => { snip.classList.toggle("full"); label(); });
+      cap.appendChild(tog);
+    }
     // wrap the <pre> in a scrollable, resizable body with a drag bar
     const pre = snip.querySelector("pre");
     const body = document.createElement("div");

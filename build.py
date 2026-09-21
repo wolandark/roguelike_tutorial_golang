@@ -35,7 +35,11 @@ def render_file(name, code, status):
 
 
 def render_diff(name, old, new, context=3):
-    """Hunks of a line diff, with line numbers of the NEW file."""
+    """A line diff between two versions of a file, with line numbers of the
+    NEW file, green added lines and red removed lines. Every line is emitted;
+    lines far from any change get the class "far" and are hidden unless the
+    block is in whole-file mode. Short files, or files where the hunks cover
+    most of the file anyway, start in whole-file mode."""
     a, b = old.split("\n"), new.split("\n")
     sm = difflib.SequenceMatcher(None, a, b, autojunk=False)
     rows = []
@@ -53,18 +57,21 @@ def render_diff(name, old, new, context=3):
         if kind != "ctx":
             for k in range(max(0, idx - context), min(len(rows), idx + context + 1)):
                 keep[k] = True
-    out, last = [], -1
+    out, in_gap = [], False
     for idx, (kind, ln, text) in enumerate(rows):
-        if not keep[idx]:
-            continue
-        if idx != last + 1 and out:
+        if not keep[idx] and not in_gap:
             out.append('<div class="diff-gap">· · ·</div>')
-        last = idx
+            in_gap = True
+        if keep[idx]:
+            in_gap = False
         n = "" if ln is None else str(ln)
         mark = {"add": "+", "del": "−", "ctx": " "}[kind]
-        out.append(f'<div class="diff-line {kind}"><span class="ln">{n}</span><span class="mark">{mark}</span>'
+        far = "" if keep[idx] else " far"
+        out.append(f'<div class="diff-line {kind}{far}"><span class="ln">{n}</span><span class="mark">{mark}</span>'
                    f'<code>{html.escape(text)}</code></div>')
-    return (f'<div class="snippet changed diff"><span class="snippet-file">{html.escape(name)}</span>'
+    shown = sum(keep)
+    full = " full" if len(rows) <= 60 or shown > 0.6 * len(rows) else ""
+    return (f'<div class="snippet changed diff{full}"><span class="snippet-file">{html.escape(name)}</span>'
             f'<pre>{"".join(out)}</pre></div>')
 
 
