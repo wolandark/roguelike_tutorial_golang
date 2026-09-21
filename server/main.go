@@ -346,10 +346,20 @@ func handlePTY(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}()
+	// ROGUE_PTY_LOG=path appends every byte the browser sends to the PTY;
+	// handy when a terminal emulator answers a query the game did not expect.
+	var inLog *os.File
+	if path := os.Getenv("ROGUE_PTY_LOG"); path != "" {
+		inLog, _ = os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		defer inLog.Close()
+	}
 	for {
 		_, data, err := c.Read(ctx)
 		if err != nil {
 			return
+		}
+		if inLog != nil {
+			fmt.Fprintf(inLog, "%q\n", data)
 		}
 		tty.Write(data)
 	}
