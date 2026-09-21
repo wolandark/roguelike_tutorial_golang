@@ -386,7 +386,11 @@ func handleOpen(w http.ResponseWriter, r *http.Request) {
 // launchTerminal tries $TERMINAL first, then the usual suspects, asking
 // each for an 80x50 window where it has a flag for it.
 func launchTerminal(bin, cwd string) (string, error) {
-	script := fmt.Sprintf(`cd %q && TERM=xterm-256color COLORTERM=truecolor %q; echo; echo "[game exited] press Enter to close this window"; read _`, cwd, bin)
+	// The window manager usually resizes a brand-new window a few tens of
+	// milliseconds after it appears, which reaches the program as an extra
+	// resize event. Waiting for the window to settle keeps the early
+	// steps, which exit on the first event after tcell's own resize, alive.
+	script := fmt.Sprintf(`sleep 0.5; cd %q && TERM=xterm-256color COLORTERM=truecolor %q; echo; echo "[game exited] press Enter to close this window"; read _`, cwd, bin)
 	sh := []string{"sh", "-c", script}
 	var candidates [][]string
 	if t := os.Getenv("TERMINAL"); t != "" {

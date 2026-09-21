@@ -29,7 +29,7 @@ The question for this step is only: what is the smallest program that takes the 
 
 --- end
 
-%%% Delete one of the two `screen.PollEvent()` lines and run it. The `@` flashes for a frame and the program is gone: the first event was the initial resize. Put the line back, then resize the window while the program waits: it ends, because the second resize is an event too.
+%%% Delete one of the two `screen.PollEvent()` lines and run it. The `@` flashes for a frame and the program is gone: the first event was the initial resize. Put the line back, then resize the window while the program waits: it ends, because the second resize is an event too. (Window managers often resize a brand-new window a moment after it opens; the *play in a terminal window* button waits half a second for that before starting the program.)
 
 %%% Delete the `screen.Fini()` line and run it. When the program ends your shell has no echo and no cursor. Type `reset` and press Enter to fix it. Now you know what `Fini` is for, and why step 3 will make it impossible to forget.
 
