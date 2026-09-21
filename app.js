@@ -13,10 +13,12 @@ const state = {
 
 // loadPreviousStep puts the previous step's version of every file into this
 // step's editor, so the reader can attempt the step themselves and build/play
-// it. Files that are new in this step start as an empty package.
+// it. The reader's own edits of the previous step win over the site's code,
+// so their style carries forward. Files new in this step start as an empty package.
 function loadPreviousStep(i) {
   const l = LESSONS[i], prev = LESSONS[i - 1];
-  const before = Object.fromEntries(prev.files.map((f) => [f.name, f.code]));
+  const before = Object.fromEntries(prev.files.map((f) => [f.name, state.drafts[draftKey(prev, f)] ?? f.code]));
+  const mine = prev.files.some((f) => state.drafts[draftKey(prev, f)] !== undefined);
   l.files.forEach((f) => {
     const code = before[f.name] ?? "package main\n";
     if (code === f.code) delete state.drafts[draftKey(l, f)];
@@ -25,7 +27,8 @@ function loadPreviousStep(i) {
   save();
   buildTabs(l);
   showFile(l, state.file);
-  squeak("the editor now holds the previous step. make it do the new thing, then play it~ 🧪");
+  squeak(mine ? "loaded your version of the previous step. make it do the new thing, then play it~ 🧪"
+              : "the editor now holds the previous step. make it do the new thing, then play it~ 🧪");
   $("codeHeading").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
