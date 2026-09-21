@@ -24,6 +24,7 @@ func run() error {
 	}
 	screen.Show()
 	screen.PollEvent()
+	screen.PollEvent()
 	return nil
 }
 

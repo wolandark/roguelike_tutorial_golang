@@ -11,9 +11,9 @@ Print `@` with `fmt.Println` and you get an `@` at the bottom of a scrolling log
 
 The question for this step is only: what is the smallest program that takes the terminal over, draws one character, and gives it back?
 
->>> Make a `main.go` that opens a tcell screen, draws an `@` somewhere, waits for anything to happen, and restores the terminal. You will need `go get github.com/gdamore/tcell/v2` first (note the `/v2`). The tcell functions you need are `NewScreen`, and on the screen: `Init`, `SetContent`, `Show`, `PollEvent`, `Fini`. Ignore errors for now.
+>>> Make a `main.go` that opens a tcell screen, draws an `@` somewhere, waits for something to happen, and restores the terminal. You will need `go get github.com/gdamore/tcell/v2` first (note the `/v2`). The tcell functions you need are `NewScreen`, and on the screen: `Init`, `SetContent`, `Show`, `PollEvent`, `Fini`. Ignore errors for now. If your program exits on its own before you can see the `@`, you have found the surprise of this step; read on.
 
-!!! A blank screen with a single `@`; any key, click or resize ends the program and your shell is back exactly as it was.
+!!! A blank screen with a single `@`; the next key, click or resize ends the program and your shell is back exactly as it was.
 
 --- reveal
 
@@ -24,10 +24,12 @@ The question for this step is only: what is the smallest program that takes the 
 - `screen.Init()` takes over the terminal: raw mode (keys arrive one at a time, nothing is echoed) and the *alternate screen*, the one `vim` and `less` use, so your shell history is untouched.
 - `screen.SetContent(10, 5, '@', nil, tcell.StyleDefault)` puts the rune `'@'` at column 10, row 5. Row 0 is the **top**. The `nil` is for combining characters (accents), never needed here. `tcell.StyleDefault` is the terminal's plain colours.
 - Nothing is visible until `screen.Show()` copies tcell's buffer to the real terminal. tcell keeps a buffer so that it can send only what changed.
-- `screen.PollEvent()` blocks until the terminal reports *anything*.
+- `screen.PollEvent()` blocks until the terminal reports *anything*. So why call it **twice**? Because tcell always delivers one event right after `Init`: a resize, telling you the screen size. A single `PollEvent` returns immediately with that resize and the program ends before you can blink. Calling it twice swallows the resize and then waits for a real event. It is a cute hack, and it is honest about what it does not do: a second resize would end the program too. Step 5 replaces it with a loop that asks *what kind* of event arrived, which is the real fix.
 - `screen.Fini()` undoes `Init()`.
 
 --- end
+
+%%% Delete one of the two `screen.PollEvent()` lines and run it. The `@` flashes for a frame and the program is gone: the first event was the initial resize. Put the line back, then resize the window while the program waits: it ends, because the second resize is an event too.
 
 %%% Delete the `screen.Fini()` line and run it. When the program ends your shell has no echo and no cursor. Type `reset` and press Enter to fix it. Now you know what `Fini` is for, and why step 3 will make it impossible to forget.
 
