@@ -1,5 +1,0 @@
-{
- "base": "steps/08-actions",
- "file": "input.go",
- "prompt": "Roguelike veterans move with the vi keys. Extend `handleKey` so that `h`, `j`, `k` and `l` move left, down, up and right. Printable characters arrive as `tcell.KeyRune`; read the character with `ev.Rune()`. Arrows and Escape must keep working, other characters still return `nil`."
-}

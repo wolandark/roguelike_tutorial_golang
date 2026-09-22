@@ -1,0 +1,5 @@
+{
+ "base": "steps/18-hiding-entities",
+ "file": "engine.go",
+ "prompt": "Add a debug \"magic mapping\" key. When the player presses `m`, mark **every** tile as explored (leave `Visible` alone) so the whole layout shows in its dark colours. Handle it in `Engine.HandleEvent` before the action lookup; it must not quit or move the player. Tip: `key.Key() == tcell.KeyRune && key.Rune() == 'm'`."
+}

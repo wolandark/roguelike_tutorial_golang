@@ -1,0 +1,5 @@
+{
+ "base": "steps/15-a-random-dungeon",
+ "file": "procgen.go",
+ "prompt": "Add a method `func (r RectangularRoom) Contains(x, y int) bool` that reports whether (x, y) is part of the room's carved floor, that is strictly inside: `X1 < x < X2` and `Y1 < y < Y2`. The wall ring around the room does not count."
+}
