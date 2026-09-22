@@ -369,7 +369,6 @@ body.nav-collapsed .sidebar { display: none; }
 .lesson-head h2 { flex: 1; }
 .done-btn { font-size: 0.78rem; padding: 7px 12px; }
 .done-btn.is-done { background: var(--green-deep); color: #fff; }
-.done-btn.is-done::after { content: " done"; }
 .cute-list { list-style: none; padding: 0; }
 .cute-list li { padding: 3px 0; }
 .lesson h3 { margin: 24px 0 8px; font-size: 1.1rem; }
