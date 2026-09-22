@@ -2,7 +2,7 @@
 
 ### The problem
 
-To put a wall somewhere we have to write `gameMap.Tiles[y*gameMap.Width+x] = wall`, and the same arithmetic already sits in `Render`. Two copies of a formula is one too many; the third copy is the one that gets a typo. Two small methods hide it: one to read a cell, one to write it. From here on nothing else in the game indexes `Tiles` directly.
+To put a wall somewhere we have to write `gameMap.Tiles[y*gameMap.Width+x] = wall`, and the same formula already sits in `Render`. Every place that repeats it is a place where `y*Width+x` can be mistyped as `x*Width+y`, which compiles and puts the wall somewhere else. So the formula goes into two small methods, one to read a cell and one to write it, and from here on nothing else in the game indexes `Tiles` directly.
 
 >>> Add `TileAt(x, y) Tile` and `SetTile(x, y, t Tile)` to `GameMap`, use `TileAt` in `Render`, and in `main.go` turn three cells of row 22 into `wall`.
 
