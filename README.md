@@ -1,4 +1,4 @@
-# Cutesy Rogue 🗡️🌸 — build a roguelike in Go, one step at a time
+# Golang Roguelike Tutorial — build a roguelike in Go, one step at a time
 
 An interactive, cute course that grows **one program** from ten lines into a complete,
 classic terminal roguelike in **Go** with [tcell](https://github.com/gdamore/tcell), in the

@@ -134,7 +134,7 @@ function openLesson(i, push = true) {
   }
   $("codeHeading").textContent = "The whole program after this step";
   $("lessonTitle").textContent = l.title;
-  document.title = `${l.title} · Cutesy Rogue 🗡️`;
+  document.title = `${l.title} · Golang Roguelike Tutorial`;
 
   const prose = $("lessonProse");
   prose.innerHTML = l.prose;
