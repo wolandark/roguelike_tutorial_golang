@@ -8,7 +8,7 @@ There are two design options. Keep everything in `main` and remember `Fini` ever
 
 >>> Move the work into `func run() error`. Right after `Init` succeeds, `defer screen.Fini()`. Make `run` return errors instead of printing them, and make `main` print whatever `run` returns to standard error and exit with status 1.
 
-!!! Unchanged on screen. But now any error after `Init`, in this step or in step 54, restores the terminal before it is reported.
+!!! Unchanged on screen. But now any error after `Init`, in this step or in step 56, restores the terminal before it is reported.
 
 --- reveal
 
