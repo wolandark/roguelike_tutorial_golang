@@ -1,0 +1,5 @@
+{
+ "base": "steps/09-actions",
+ "file": "input.go",
+ "prompt": "Roguelike veterans move diagonally with `y` (up-left), `u` (up-right), `b` (down-left) and `n` (down-right). Add four cases to `handleKey` for them, returning the matching `MovementAction`. Arrows, `hjkl` and Escape must keep working, and other characters still return `nil`."
+}
