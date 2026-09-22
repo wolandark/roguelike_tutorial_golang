@@ -78,9 +78,11 @@ function updateProgress() {
 
 /* ---------- mascot chatter ---------- */
 const CHATTER = [
-  "pick a step.", "the @ is you.", "edit the code; the build button tells you what broke.",
-  "hjkl work in the game, so do the arrows.", "gofmt everything.",
-  "a corpse is just an entity with a different glyph.",
+  "kobold says: pick a step.", "kobold says: the @ is you. I am the k.",
+  "kobold says: edit the code; the build button tells you what broke.",
+  "kobold says: hjkl work in the game, so do the arrows.", "kobold says: gofmt everything.",
+  "kobold says: a corpse is just an entity with a different glyph.",
+  "kobold says: I get 10 XP in most games. Be kind.",
 ];
 let chatterTimer;
 function squeak(msg) {
@@ -215,8 +217,8 @@ $("doneBtn").addEventListener("click", () => {
     state.done.add(l.slug);
     confetti();
     squeak(state.done.size === LESSONS.length
-      ? "all steps done. you built a roguelike."
-      : "step done. next?");
+      ? "kobold says: all steps done. You built a roguelike."
+      : "kobold says: step done. Next?");
   }
   save(); updateProgress(); updateDoneBtn(); buildNav($("search").value);
 });
@@ -634,5 +636,5 @@ $("themePick").addEventListener("change", (e) => {
   const start = location.hash.slice(1);
   const i = LESSONS.findIndex((l) => l.slug === start);
   if (i >= 0) openLesson(i, false);
-  setTimeout(() => squeak(`${state.done.size}/${LESSONS.length} steps done, ${state.exDone.size} exercises solved`), 800);
+  setTimeout(() => squeak(`kobold says: ${state.done.size}/${LESSONS.length} steps done, ${state.exDone.size} exercises solved.`), 800);
 })();
