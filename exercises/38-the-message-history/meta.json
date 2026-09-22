@@ -1,5 +1,0 @@
-{
- "base": "steps/38-the-message-history",
- "file": "messagelog.go",
- "prompt": "`wrap` only breaks lines at spaces, so a single word longer than the width spills past the log's edge. Fix `wrap` so that a word longer than `width` is split into chunks of at most `width` characters, counting runes (`len([]rune(word))`), not bytes. Normal sentences must wrap exactly as before."
-}
