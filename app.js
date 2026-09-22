@@ -61,7 +61,7 @@ function buildNav(filter = "") {
     if (state.done.has(l.slug)) {
       const star = document.createElement("span");
       star.className = "done-star";
-      star.textContent = "⚔️";
+      star.textContent = "✓";
       btn.appendChild(star);
     }
     btn.addEventListener("click", () => openLesson(i));
@@ -93,7 +93,7 @@ $("mascot").addEventListener("click", () => squeak(CHATTER[Math.floor(Math.rando
 
 /* ---------- confetti ---------- */
 function confetti() {
-  const bits = ["⚔️", "🗡️", "💀", "🗝️", "🧪", "💰"];
+  const bits = ["@", "%", "!", "~", ">", "#"];
   for (let i = 0; i < 28; i++) {
     const s = document.createElement("span");
     s.className = "confetti";
@@ -130,7 +130,7 @@ function openLesson(i, push = true) {
     $("sampleOut").appendChild(label);
     $("sampleOut").appendChild(document.createTextNode(l.output));
   }
-  $("codeHeading").textContent = "📂 the whole program after this step";
+  $("codeHeading").textContent = "The whole program after this step";
   $("lessonTitle").textContent = l.title;
   document.title = `${l.title} · Cutesy Rogue 🗡️`;
 
@@ -203,7 +203,7 @@ function updateDoneBtn() {
   const btn = $("doneBtn");
   const done = state.done.has(l.slug);
   btn.classList.toggle("is-done", done);
-  btn.innerHTML = done ? "check again? ✅" : "mark done ⚔️";
+  btn.innerHTML = done ? "mark as not done" : "mark done";
 }
 
 $("doneBtn").addEventListener("click", () => {
@@ -261,7 +261,7 @@ async function buildCode() {
   const box = $("outputBox");
   const isRun = l.kind === "stdout";
   btn.disabled = true;
-  btn.textContent = isRun ? "running… ⏳" : "building… ⏳";
+  btn.textContent = isRun ? "running…" : "building…";
   $("runHint").textContent = isRun ? "compiling and running with a real Go toolchain…" : "go vet with a real toolchain (every file, with your edits)…";
   box.classList.remove("hidden", "err", "pass");
   box.textContent = "compiling…";
@@ -278,7 +278,7 @@ async function buildCode() {
       if (data.stderr) out += (out ? "\n" : "") + data.stderr;
       const ok = !data.buildErr && !data.stderr;
       showOutput(box, ok, out, "output 🐾", "uh-oh! 🙀");
-      squeak(ok ? "it runs! want to mark it done? ⚔️" : "bugs are just misunderstood features… try fixing it! 🔧");
+      squeak(ok ? "it runs." : "it failed; see the output.");
     } else {
       showOutput(box, data.ok, data.output, "it builds", "build error");
       squeak(data.ok ? "it compiles. press play." : "build failed; see the output.");
@@ -288,7 +288,7 @@ async function buildCode() {
     box.textContent = "no runner available 😿 (start the server: docker compose up, or go run ./server)";
   } finally {
     btn.disabled = false;
-    btn.textContent = isRun ? "▶ run it!" : "🔨 just build";
+    btn.textContent = isRun ? "run it" : "just build";
     $("runHint").textContent = "";
   }
 }
@@ -444,7 +444,7 @@ function enhanceSnippets(root) {
     }
     const btn = document.createElement("button");
     btn.className = "ghost-btn snippet-copy";
-    btn.textContent = "⧉ copy";
+    btn.textContent = "copy";
     btn.title = snip.classList.contains("diff") ? "copy the resulting code (added + unchanged lines)" : "copy this code";
     btn.addEventListener("click", () => copyText(snippetText(snip), cap.textContent.trim() || "code"));
     cap.appendChild(btn);
@@ -572,7 +572,7 @@ async function checkExercise(card, key) {
   const box = card.querySelector(".output");
   const hint = card.querySelector(".hint");
   btn.disabled = true;
-  btn.textContent = "checking… ⏳";
+  btn.textContent = "checking…";
   hint.textContent = "compiling your file into the part & running the hidden tests…";
   box.classList.remove("hidden", "err", "pass");
   box.textContent = "checking…";
@@ -601,7 +601,7 @@ async function checkExercise(card, key) {
     box.textContent = "no checker available 😿 (start the server: docker compose up, or go run ./server)";
   } finally {
     btn.disabled = false;
-    btn.textContent = "✔ check my answer";
+    btn.textContent = "check my answer";
     hint.textContent = "";
   }
 }
