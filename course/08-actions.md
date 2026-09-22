@@ -8,7 +8,7 @@ The fix is to separate two questions. Input answers only "what does the player w
 
 This is also the first time the program is more than one file. All `.go` files in the folder belong to `package main` and see each other's names; there is nothing to import.
 
->>> Create `actions.go` with an `Action` type that any value can be (an empty interface), plus `EscapeAction` (no data) and `MovementAction` with `DX, DY int`. Create `input.go` with `handleKey(ev *tcell.EventKey) Action` that maps the arrows and Escape/Ctrl-C to those values and returns `nil` otherwise. In the loop, switch on the action's type instead of the key.
+>>> Create `actions.go` with an `Action` type that any value can be (an empty interface), plus `EscapeAction` (no data) and `MovementAction` with `DX, DY int`. Create `input.go` with `handleKey(ev *tcell.EventKey) Action` that moves the tagless switch there and returns those values (arrows and vi keys to movements, Escape/Ctrl-C to escape, `nil` otherwise). In the loop, switch on the action's type instead of the key.
 
 !!! Behaves exactly like step 7. The structure is what changed.
 
@@ -29,4 +29,4 @@ This is also the first time the program is more than one file. All `.go` files i
 
 --- end
 
-%%% Add a `case tcell.KeyRune:` to `handleKey` that returns `MovementAction{DX: 1, DY: 0}` when `ev.Rune() == 'l'`. The loop did not change and `l` moves you right: input and consequences are now independent. (The chapter 5 exercise does the full vi set.)
+%%% Add a case to `handleKey` that returns `MovementAction{DX: 1, DY: 1}` for `ev.Rune() == 'n'`. The loop did not change and `n` moves you diagonally: input and consequences are now independent. (The chapter exercise adds all four diagonals.)
