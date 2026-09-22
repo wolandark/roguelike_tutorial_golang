@@ -127,7 +127,7 @@ def markdown(src):
             paras = []
             while i < len(lines) and lines[i].startswith(">>> "):
                 paras.append(inline(lines[i][4:])); i += 1
-            out.append('<div class="try"><div class="try-head">🧪 try it first</div>' +
+            out.append('<div class="try"><div class="try-head">Try it first</div>' +
                        "".join(f"<p>{x}</p>" for x in paras) +
                        '<div class="try-actions"><button class="ghost-btn try-load">load the previous step into the editor</button>'
                        '<label class="try-always"><input type="checkbox" class="try-always-box"> always show solutions</label></div></div>')
