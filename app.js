@@ -61,7 +61,7 @@ function buildNav(filter = "") {
     if (state.done.has(l.slug)) {
       const star = document.createElement("span");
       star.className = "done-star";
-      star.textContent = "✓";
+      star.textContent = "⚔️";
       btn.appendChild(star);
     }
     btn.addEventListener("click", () => openLesson(i));
