@@ -27,8 +27,7 @@ function loadPreviousStep(i) {
   save();
   buildTabs(l);
   showFile(l, state.file);
-  squeak(mine ? "loaded your version of the previous step. make it do the new thing, then play it~ 🧪"
-              : "the editor now holds the previous step. make it do the new thing, then play it~ 🧪");
+  squeak(mine ? "loaded your version of the previous step." : "loaded the previous step.");
   $("codeHeading").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -79,11 +78,9 @@ function updateProgress() {
 
 /* ---------- mascot chatter ---------- */
 const CHATTER = [
-  "hi hi! pick a step! ⚔️", "you're doing grr-eat! 💪",
-  "did you know? the @ is YOU!", "edit the code, i dare you~ 😼",
-  "hjkl are your friends, so are the arrow keys!",
-  "remember: gofmt everything 🧹", "orcs are just misunderstood 🧌",
-  "a corpse is just an entity with a different glyph 💀",
+  "pick a step.", "the @ is you.", "edit the code; the build button tells you what broke.",
+  "hjkl work in the game, so do the arrows.", "gofmt everything.",
+  "a corpse is just an entity with a different glyph.",
 ];
 let chatterTimer;
 function squeak(msg) {
@@ -213,13 +210,13 @@ $("doneBtn").addEventListener("click", () => {
   const l = LESSONS[state.idx];
   if (state.done.has(l.slug)) {
     state.done.delete(l.slug);
-    squeak("aww, un-done! that's okay~");
+    squeak("step marked as not done.");
   } else {
     state.done.add(l.slug);
     confetti();
     squeak(state.done.size === LESSONS.length
-      ? "YOU BUILT A WHOLE ROGUELIKE?! 🏆🗡️ slime is SO proud!"
-      : "yay! +1 loot 🗝️ next step?");
+      ? "all steps done. you built a roguelike."
+      : "step done. next?");
   }
   save(); updateProgress(); updateDoneBtn(); buildNav($("search").value);
 });
@@ -240,11 +237,11 @@ $("resetCodeBtn").addEventListener("click", () => {
   delete state.drafts[draftKey(l, f)];
   setCode($("codeArea"), f.code);
   save(); buildTabs(l);
-  squeak("back to the original! 🧼");
+  squeak("restored the original file.");
 });
 $("copyRunBtn").addEventListener("click", () => {
   navigator.clipboard?.writeText($("runCmd").textContent);
-  squeak("copied! paste it in your terminal~ 💻");
+  squeak("copied.");
 });
 
 function showOutput(box, ok, text, okLabel, errLabel) {
@@ -283,8 +280,8 @@ async function buildCode() {
       showOutput(box, ok, out, "output 🐾", "uh-oh! 🙀");
       squeak(ok ? "it runs! want to mark it done? ⚔️" : "bugs are just misunderstood features… try fixing it! 🔧");
     } else {
-      showOutput(box, data.ok, data.output, "it builds! 🐾", "uh-oh! 🙀");
-      squeak(data.ok ? "it compiles! press ▶ to play it 🗡️" : "bugs are just misunderstood features… try fixing it! 🔧");
+      showOutput(box, data.ok, data.output, "it builds", "build error");
+      squeak(data.ok ? "it compiles. press play." : "build failed; see the output.");
     }
   } catch (e) {
     box.classList.add("err");
@@ -337,7 +334,7 @@ function playHere() {
   };
   sock.onclose = () => { sock = null; };
   sock.onerror = () => term.write("\r\n\x1b[31mno game server 😿 (start it: go run ./server)\x1b[0m\r\n");
-  squeak("arrows or hjkl to move, Esc to quit~ 🗡️");
+  squeak("arrows or hjkl move, Esc quits.");
   $("termWrap").scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 $("playBtn").addEventListener("click", playHere);
@@ -359,8 +356,8 @@ async function openTerminal() {
       body: JSON.stringify({ base: l.base, files: editedFiles(l) }),
     });
     const data = await res.json();
-    showOutput(box, data.ok, data.output, "launched! 🐾", "uh-oh! 🙀");
-    squeak(data.ok ? "a terminal window should pop up now! 🖥️" : "hmm, check the message below~");
+    showOutput(box, data.ok, data.output, "launched", "error");
+    squeak(data.ok ? "a terminal window should have opened." : "see the message below.");
   } catch (e) {
     box.classList.add("err");
     box.textContent = "no game server 😿 (start it on this machine: go run ./server)";
@@ -391,7 +388,7 @@ $("resetBtn").addEventListener("click", () => {
   Object.keys(state.exDrafts).forEach((k) => delete state.exDrafts[k]);
   save(); updateProgress(); buildNav($("search").value);
   if (state.idx >= 0) { const l = LESSONS[state.idx]; buildTabs(l); showFile(l, state.file); loadExercise(l); }
-  squeak("fresh start! 🌱");
+  squeak("progress reset.");
 });
 
 document.addEventListener("keydown", (e) => {
@@ -555,7 +552,7 @@ function loadExercise(l) {
       delete state.exDrafts[key];
       setCode(t, ex.starter);
       save();
-      squeak("back to the starter code! 🧼");
+      squeak("restored the starter code.");
     });
     card.querySelector(".ex-check").addEventListener("click", () => checkExercise(card, key));
     updateExerciseBadge(card, key);
@@ -587,16 +584,16 @@ async function checkExercise(card, key) {
     });
     const data = await res.json();
     const passed = !!data.pass;
-    showOutput(box, passed, (data.output || "") + (passed ? "\n\nyour slime is proud! 💖" : ""), "pass! 🗝️", "not quite yet 🙁");
+    showOutput(box, passed, data.output || "", "pass", "fail");
     if (passed) {
       if (!state.exDone.has(key)) {
         state.exDone.add(key);
         save();
         confetti();
       }
-      squeak("exercise solved! +1 workout point 💪");
+      squeak("exercise solved.");
     } else {
-      squeak("so close! read the test output for hints~");
+      squeak("not yet; read the test output.");
     }
     updateExerciseBadge(card, key);
   } catch (e) {
@@ -609,12 +606,19 @@ async function checkExercise(card, key) {
   }
 }
 
+/* ---------- sidebar toggle ---------- */
+document.body.classList.toggle("nav-collapsed", localStorage.getItem("rogueCuteNav") === "collapsed");
+$("navToggle").addEventListener("click", () => {
+  const collapsed = document.body.classList.toggle("nav-collapsed");
+  localStorage.setItem("rogueCuteNav", collapsed ? "collapsed" : "");
+});
+
 /* ---------- themes ---------- */
 $("themePick").value = document.documentElement.dataset.theme;
 $("themePick").addEventListener("change", (e) => {
   document.documentElement.dataset.theme = e.target.value;
   localStorage.setItem("rogueCuteTheme", e.target.value);
-  squeak(`ooh, ${e.target.selectedOptions[0].textContent.trim()} looks good on you~`);
+  squeak(`theme: ${e.target.selectedOptions[0].textContent.trim()}`);
 });
 
 /* ---------- boot ---------- */
@@ -630,5 +634,5 @@ $("themePick").addEventListener("change", (e) => {
   const start = location.hash.slice(1);
   const i = LESSONS.findIndex((l) => l.slug === start);
   if (i >= 0) openLesson(i, false);
-  setTimeout(() => squeak(`welcome back! ${state.done.size}/${LESSONS.length} done, ${state.exDone.size} exercises solved ⚔️`), 800);
+  setTimeout(() => squeak(`${state.done.size}/${LESSONS.length} steps done, ${state.exDone.size} exercises solved`), 800);
 })();

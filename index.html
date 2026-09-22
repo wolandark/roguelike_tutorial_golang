@@ -5,28 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cutesy Rogue — build a roguelike in Go, step by step</title>
 <link rel="stylesheet" href="js/xterm.css">
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
 <header class="topbar">
-  <div class="mascot" id="mascot"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="a cute slime adventurer" role="img">
-    <path d="M14 78 C10 50, 22 26, 50 24 C78 26, 90 50, 86 78 C86 88, 14 88, 14 78 Z" fill="#ff8fc7" stroke="#4a3b52" stroke-width="2.5"/>
-    <ellipse cx="36" cy="40" rx="6" ry="4" fill="#ffd6ea"/>
-    <circle cx="38" cy="54" r="6" fill="#4a3b52"/>
-    <circle cx="62" cy="54" r="6" fill="#4a3b52"/>
-    <circle cx="40" cy="52" r="2" fill="#fff"/>
-    <circle cx="64" cy="52" r="2" fill="#fff"/>
-    <ellipse cx="28" cy="64" rx="6" ry="3.5" fill="#ff5fa8" opacity=".6"/>
-    <ellipse cx="72" cy="64" rx="6" ry="3.5" fill="#ff5fa8" opacity=".6"/>
-    <path d="M44 68 Q50 74 56 68" stroke="#4a3b52" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-    <text x="50" y="86" text-anchor="middle" font-family="monospace" font-size="15" font-weight="700" fill="#4a3b52">@</text>
-    <line x1="80" y1="56" x2="96" y2="22" stroke="#c9b8ff" stroke-width="5" stroke-linecap="round"/>
-    <line x1="80" y1="56" x2="96" y2="22" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-    <line x1="76" y1="52" x2="88" y2="60" stroke="#4a3b52" stroke-width="4" stroke-linecap="round"/>
+  <button id="navToggle" class="nav-toggle" title="show or hide the step list" aria-label="toggle sidebar">☰</button>
+  <div class="mascot" id="mascot"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-label="skull" role="img">
+    <path fill="currentColor" d="M32 4C17.6 4 6 15.2 6 29c0 8.6 4.4 16.1 11 20.5V56a4 4 0 0 0 4 4h4v-8h4v8h6v-8h4v8h4a4 4 0 0 0 4-4v-6.5C53.6 45.1 58 37.6 58 29 58 15.2 46.4 4 32 4zm-9 34a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm18 0a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm-9 2 4 8h-8l4-8z"/>
   </svg></div>
   <div class="titles">
     <h1>Cutesy Rogue</h1>
-    <p class="tagline">build a roguelike in Go + tcell, one step at a time — with your pocket slime</p>
+    <p class="tagline">build a roguelike in Go + tcell, one step at a time</p>
   </div>
   <select id="themePick" class="theme-pick" title="pick a theme" aria-label="theme">
     <optgroup label="cute">
@@ -65,42 +54,42 @@
 
 <div class="layout">
   <nav class="sidebar" id="sidebar">
-    <input id="search" type="search" placeholder="🔍 search steps…" autocomplete="off">
+    <input id="search" type="search" placeholder="search steps" autocomplete="off">
     <ol id="navList"></ol>
     <footer class="sidebar-foot">
-      <button id="resetBtn" class="ghost-btn">↺ reset progress</button>
-      <p>A Go + <a href="https://github.com/gdamore/tcell" target="_blank" rel="noopener">tcell</a> re-imagining of the <a href="https://rogueliketutorials.com/tutorials/tcod/v2/" target="_blank" rel="noopener">python-tcod roguelike tutorial</a>. Cute-fied with 💖.</p>
+      <button id="resetBtn" class="ghost-btn">reset progress</button>
+      <p>A Go + <a href="https://github.com/gdamore/tcell" target="_blank" rel="noopener">tcell</a> take on the <a href="https://rogueliketutorials.com/tutorials/tcod/v2/" target="_blank" rel="noopener">python-tcod roguelike tutorial</a>.</p>
     </footer>
   </nav>
 
   <main class="content" id="content">
     <section id="welcome" class="lesson">
-      <h2>Hii there, adventurer! 👋</h2>
+      <h2>Cutesy Rogue</h2>
       <p>Welcome to <strong>Cutesy Rogue</strong>! One program, grown one small step at a time into a complete, classic terminal roguelike in <strong>Go</strong> with <code>tcell</code>. Step 1 is ten lines. Every step after it adds a handful of lines, shows you exactly which ones, and explains each new piece of Go the first time you meet it: <code>defer</code>, methods, interfaces, embedding, closures, <code>container/heap</code>, <code>encoding/gob</code>... By the end you have written all ~2,300 lines yourself and you know why every one of them is there.</p>
       <ul class="cute-list">
-        <li>📖 ~50 steps in 14 chapters, each a few lines with the reason for them</li>
-        <li>🧪 each step starts from something you can see go wrong, then asks you to <em>try it first</em>: load the previous step into the editor, make it do the new thing, play it, then reveal how the step does it</li>
-        <li>➕ the exact lines to add, as a diff against the previous step, with every new piece of Go explained; the whole program is always one tab away</li>
-        <li>🔬 <em>break it on purpose</em> experiments that show why a line is there</li>
-        <li>▶ <em>play here</em>: the server builds the step (with your edits!) and runs it in a live terminal in the page, or in your own terminal window</li>
-        <li>🏋️ an exercise at the end of every chapter, checked by hidden Go tests</li>
-        <li>⚔️ check off steps and collect loot</li>
+        <li>About 50 steps in 14 chapters, each a few lines with the reason for them.</li>
+        <li>Each step starts from something you can see go wrong, then asks you to <em>try it first</em>: load the previous step into the editor, make it do the new thing, play it, then reveal how the step does it.</li>
+        <li>The exact lines to add, as a diff against the previous step, with every new piece of Go explained. The whole program is always one tab away.</li>
+        <li><em>Break it on purpose</em> experiments that show why a line is there.</li>
+        <li><em>Play here</em>: the server builds the step, with your edits, and runs it in a terminal in the page or in your own terminal window.</li>
+        <li>An exercise at the end of every chapter, checked by hidden Go tests.</li>
+        <li>Progress is kept in your browser.</li>
       </ul>
       <p>Every step is also a plain Go program you can run yourself from a clone of this repo:</p>
       <div class="runbox"><code>go run ./steps/01-hello-tcell</code></div>
-      <p>You need <strong>Go 1.22+</strong> and, for your own terminal, at least <strong>80×50</strong> characters. Pick any part from the menu, or just follow the path in order!</p>
-      <button id="startBtn" class="big-btn">let's go! ⚔️</button>
+      <p>You need <strong>Go 1.22+</strong> and, for your own terminal, at least <strong>80×50</strong> characters. Pick any step from the list, or follow them in order.</p>
+      <button id="startBtn" class="big-btn">start at step 1</button>
     </section>
 
     <section id="lessonView" class="lesson hidden">
       <div class="lesson-head">
         <span class="lesson-num" id="lessonNum"></span>
         <h2 id="lessonTitle"></h2>
-        <button id="doneBtn" class="big-btn done-btn">mark done ⚔️</button>
+        <button id="doneBtn" class="big-btn done-btn">mark done</button>
       </div>
       <div id="lessonProse"></div>
 
-      <h3 class="code-heading" id="codeHeading">✏️ the program</h3>
+      <h3 class="code-heading" id="codeHeading">The whole program after this step</h3>
       <pre id="sampleOut" class="output sample hidden"></pre>
       <div class="runbox">in your own terminal: <code id="runCmd"></code><button id="copyRunBtn" class="ghost-btn">copy</button></div>
       <div class="editor-card">
@@ -114,13 +103,13 @@
         <div class="editor-foot">
           <button id="runBtn" class="big-btn run-btn only-stdout">▶ run it!</button>
           <button id="playBtn" class="big-btn run-btn only-tui">▶ play here</button>
-          <button id="openBtn" class="big-btn run-btn alt-btn only-tui">🖥️ play in a terminal window</button>
-          <button id="runBtn2" class="ghost-btn only-tui" title="compile without running">🔨 just build</button>
+          <button id="openBtn" class="big-btn run-btn alt-btn only-tui">play in a terminal window</button>
+          <button id="runBtn2" class="ghost-btn only-tui" title="compile without running">just build</button>
           <span class="hint" id="runHint"></span>
         </div>
         <pre id="outputBox" class="output hidden"></pre>
         <div id="termWrap" class="term-wrap hidden">
-          <div class="term-head"><span>🕹️ your game, live — click inside to give it the keyboard</span><button id="termClose" class="ghost-btn">✕ stop</button></div>
+          <div class="term-head"><span>your game, live. Click inside to give it the keyboard.</span><button id="termClose" class="ghost-btn">stop</button></div>
           <div id="term"></div>
         </div>
       </div>
@@ -133,7 +122,7 @@
       <div id="exercises"></div>
       <template id="exerciseTpl">
         <section class="exercise-card">
-          <h3 class="exercise-title">🏋️ your turn! <span class="exercise-sub">solve it yourself</span></h3>
+          <h3 class="exercise-title">Exercise <span class="exercise-sub">solve it yourself</span></h3>
           <p class="exercise-prompt"></p>
           <div class="editor-card exercise-editor">
             <div class="editor-head">
@@ -161,6 +150,6 @@
 <script src="js/prism-go.min.js"></script>
 <script src="js/xterm.js"></script>
 <script src="data.js?v=2"></script>
-<script src="app.js?v=7"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>
