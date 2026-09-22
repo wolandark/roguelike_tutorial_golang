@@ -33,4 +33,4 @@ Go's `switch` has a second form for exactly this: written without a value, each 
 
 %%% Put `case tcell.KeyUp || ev.Rune() == 'k':` back into a `switch ev.Key()` and read the compiler message once more, slowly. `mismatched types tcell.Key and untyped bool` is Go telling you which two things you tried to combine. Learning to read that line is worth more than this step.
 
-%%% Write the quit case as `case tcell.KeyEscape, tcell.KeyCtrlC:` inside the tagless switch. It compiles, because `tcell.KeyEscape` is a constant that converts to... no: it does not compile either, `tcell.KeyEscape` is not a `bool`. Every case in a tagless switch must be a condition.
+%%% Now the mirror image: inside the tagless switch, write the quit case the old way, `case tcell.KeyEscape, tcell.KeyCtrlC:`. It does not compile either: `tcell.KeyEscape` is a `tcell.Key`, and every case of a tagless switch must be a `bool`. The two forms of `switch` do not mix, in either direction.
