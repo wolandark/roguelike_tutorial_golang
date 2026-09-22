@@ -483,8 +483,14 @@ func main() {
 	http.HandleFunc("/api/open", jsonHandler(handleOpen))
 	http.HandleFunc("/api/pty", handlePTY)
 
-	fmt.Println("🗡️  cutesy rogue tutorial server on http://127.0.0.1:8378")
-	if err := http.ListenAndServe(":8378", nil); err != nil {
+	// ROGUE_ADDR overrides the listen address (default :8378), e.g. for a
+	// second instance next to a running one.
+	addr := os.Getenv("ROGUE_ADDR")
+	if addr == "" {
+		addr = ":8378"
+	}
+	fmt.Println("🗡️  cutesy rogue tutorial server on http://127.0.0.1" + addr)
+	if err := http.ListenAndServe(addr, nil); err != nil {
 		panic(err)
 	}
 }
