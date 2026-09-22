@@ -1,5 +1,0 @@
-{
- "base": "steps/50-wielding-and-wearing",
- "file": "equipment.go",
- "prompt": "Add a third equipment slot: a `Shield` constant of type `EquipmentType` (after `Armor`). `PowerBonus` and `DefenseBonus` must include the shield (they loop over a hard-coded list of slots), and equipping a second shield must unequip the first, exactly like weapons and armour."
-}

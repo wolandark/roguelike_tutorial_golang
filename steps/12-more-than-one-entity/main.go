@@ -23,10 +23,14 @@ func run() error {
 	defer screen.Fini()
 
 	player := &Entity{X: screenWidth / 2, Y: screenHeight / 2, Char: '@', Color: tcell.ColorWhite}
+	npc := &Entity{X: screenWidth/2 - 5, Y: screenHeight / 2, Char: '@', Color: tcell.ColorYellow}
+	entities := []*Entity{npc, player}
 
 	for {
 		screen.Clear()
-		screen.SetContent(player.X, player.Y, player.Char, nil, tcell.StyleDefault.Foreground(player.Color))
+		for _, e := range entities {
+			screen.SetContent(e.X, e.Y, e.Char, nil, tcell.StyleDefault.Foreground(e.Color))
+		}
 		screen.Show()
 
 		ev, ok := screen.PollEvent().(*tcell.EventKey)
@@ -38,8 +42,7 @@ func run() error {
 		case EscapeAction:
 			return nil
 		case MovementAction:
-			player.X += action.DX
-			player.Y += action.DY
+			player.Move(action.DX, action.DY)
 		}
 	}
 }

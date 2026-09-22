@@ -1,5 +1,0 @@
-{
- "base": "steps/24-the-monsters-turn",
- "file": "procgen.go",
- "prompt": "Waking up next to an orc is rude. Change `GenerateDungeon` so that **no monsters are placed in the first room** (the one the player starts in). Every other room still gets its monsters."
-}
