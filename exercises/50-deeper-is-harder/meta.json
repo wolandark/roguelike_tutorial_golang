@@ -1,5 +1,0 @@
-{
- "base": "steps/50-deeper-is-harder",
- "file": "procgen.go",
- "prompt": "Balancing is easier when you can *see* the odds. Add `func spawnTable(chances map[int][]spawnChance, floor int) map[string]int` that returns the merged spawn weights that apply on `floor`, keyed by the template's `Name`: every entry from floor 0 up to `floor`, with later floors replacing the weight of an entity listed again. Example: `spawnTable(enemyChances, 3)` is `{\"Orc\": 80, \"Troll\": 15}`."
-}
