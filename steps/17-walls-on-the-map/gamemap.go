@@ -15,10 +15,6 @@ func NewGameMap(width, height int) *GameMap {
 	return m
 }
 
-func (m *GameMap) InBounds(x, y int) bool {
-	return x >= 0 && x < m.Width && y >= 0 && y < m.Height
-}
-
 func (m *GameMap) TileAt(x, y int) Tile { return m.Tiles[y*m.Width+x] }
 
 func (m *GameMap) SetTile(x, y int, t Tile) { m.Tiles[y*m.Width+x] = t }

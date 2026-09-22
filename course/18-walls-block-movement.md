@@ -6,11 +6,15 @@ Walk into the wall in step 13: you pass through. The movement code changes x and
 
 "The world" is about to be several things: entities, the player, the map. Bundling them into an **Engine** struct gives actions one parameter, and gives the loop one object to ask for drawing and input handling. After this step `main.go` is tiny and stays that way.
 
->>> Give `Action` a method, `Perform(engine *Engine, entity *Entity)`. Make `MovementAction.Perform` refuse to move off the map or onto a non-walkable tile. Create `engine.go` with an `Engine` holding the entities, the player and the map, a `HandleEvent(ev) (quit bool)` that turns keys into actions and performs them, and a `Render(screen)` that clears, draws map and entities, and shows. Shrink `run` to build the engine and loop.
+>>> Add `InBounds(x, y) bool` to `GameMap`: true when `0 <= x < Width` and `0 <= y < Height`, false for any cell outside the map. Give `Action` a method, `Perform(engine *Engine, entity *Entity)`. Make `MovementAction.Perform` refuse to move off the map (`InBounds`) or onto a non-walkable tile (`TileAt(...).Walkable`), in that order. Create `engine.go` with an `Engine` holding the entities, the player and the map, a `HandleEvent(ev) (quit bool)` that turns keys into actions and performs them, and a `Render(screen)` that clears, draws map and entities, and shows. Shrink `run` to build the engine and loop.
 
 !!! Walk into the three-cell wall; the `@` stops. The map edge stops you too.
 
 --- reveal
+
+{{diff gamemap.go}}
+
+- `InBounds` is four comparisons: the cell is inside when `x` is at least 0 and below `Width`, and the same for `y` and `Height`. It exists because `TileAt` on a cell outside the map either panics or, for some coordinates, quietly returns a cell from a neighbouring row (see the experiment in step 17). Every caller that computes a coordinate checks it first.
 
 {{diff actions.go}}
 
