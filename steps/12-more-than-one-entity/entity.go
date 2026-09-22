@@ -7,3 +7,8 @@ type Entity struct {
 	Char  rune
 	Color tcell.Color
 }
+
+func (e *Entity) Move(dx, dy int) {
+	e.X += dx
+	e.Y += dy
+}

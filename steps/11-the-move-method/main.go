@@ -38,8 +38,7 @@ func run() error {
 		case EscapeAction:
 			return nil
 		case MovementAction:
-			player.X += action.DX
-			player.Y += action.DY
+			player.Move(action.DX, action.DY)
 		}
 	}
 }

@@ -16,7 +16,7 @@ This is also the first time the program is more than one file. All `.go` files i
 
 {{file actions.go}}
 
-- `type Action interface{}`: an **interface** lists methods a value must have; an empty one lists none, so *any* value is an `Action`. For now it is only a common return type; in step 12 it gets a real method.
+- `type Action interface{}`: an **interface** lists methods a value must have; an empty one lists none, so *any* value is an `Action`. For now it is only a common return type; in step 14 it gets a real method.
 - `type EscapeAction struct{}` is a struct with no fields: a value that carries no data, only meaning. `MovementAction` carries the step.
 
 {{file input.go}}
