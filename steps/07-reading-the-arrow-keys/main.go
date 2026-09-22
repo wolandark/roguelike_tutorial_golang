@@ -33,16 +33,16 @@ func run() error {
 		if !ok {
 			continue
 		}
-		switch ev.Key() {
-		case tcell.KeyUp:
+		switch {
+		case ev.Key() == tcell.KeyUp || ev.Rune() == 'k':
 			playerY--
-		case tcell.KeyDown:
+		case ev.Key() == tcell.KeyDown || ev.Rune() == 'j':
 			playerY++
-		case tcell.KeyLeft:
+		case ev.Key() == tcell.KeyLeft || ev.Rune() == 'h':
 			playerX--
-		case tcell.KeyRight:
+		case ev.Key() == tcell.KeyRight || ev.Rune() == 'l':
 			playerX++
-		case tcell.KeyEscape, tcell.KeyCtrlC:
+		case ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC:
 			return nil
 		}
 	}
