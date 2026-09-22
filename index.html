@@ -10,12 +10,17 @@
 <body>
 <header class="topbar">
   <button id="navToggle" class="nav-toggle" title="show or hide the step list" aria-label="toggle sidebar">☰</button>
-  <div class="mascot" id="mascot"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-label="skull" role="img">
-    <path fill="currentColor" d="M32 4C17.6 4 6 15.2 6 29c0 8.6 4.4 16.1 11 20.5V56a4 4 0 0 0 4 4h4v-8h4v8h6v-8h4v8h4a4 4 0 0 0 4-4v-6.5C53.6 45.1 58 37.6 58 29 58 15.2 46.4 4 32 4zm-9 34a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm18 0a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm-9 2 4 8h-8l4-8z"/>
+  <div class="mascot" id="mascot"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-label="kobold" role="img">
+    <path fill="currentColor" d="M10 6l12 14h20L54 6l-2 20c4 4 6 9 6 15 0 11-11 19-26 19S6 52 6 41c0-6 2-11 6-15z"/>
+    <circle cx="23" cy="36" r="4.5" fill="var(--card)"/>
+    <circle cx="41" cy="36" r="4.5" fill="var(--card)"/>
+    <circle cx="24" cy="37" r="2" fill="currentColor"/>
+    <circle cx="42" cy="37" r="2" fill="currentColor"/>
+    <path fill="var(--card)" d="M22 48h20l-2 6-3-4-3 4-2-4-2 4-3-4-3 4z"/>
   </svg></div>
   <div class="titles">
     <h1>Cutesy Rogue</h1>
-    <p class="tagline">build a roguelike in Go + tcell, one step at a time</p>
+    <p class="tagline">build a roguelike in Go + tcell, one step at a time. The kobold keeps score.</p>
   </div>
   <select id="themePick" class="theme-pick" title="pick a theme" aria-label="theme">
     <optgroup label="cute">
@@ -65,7 +70,7 @@
   <main class="content" id="content">
     <section id="welcome" class="lesson">
       <h2>Cutesy Rogue</h2>
-      <p>Welcome to <strong>Cutesy Rogue</strong>! One program, grown one small step at a time into a complete, classic terminal roguelike in <strong>Go</strong> with <code>tcell</code>. Step 1 is ten lines. Every step after it adds a handful of lines, shows you exactly which ones, and explains each new piece of Go the first time you meet it: <code>defer</code>, methods, interfaces, embedding, closures, <code>container/heap</code>, <code>encoding/gob</code>... By the end you have written all ~2,300 lines yourself and you know why every one of them is there.</p>
+      <p><strong>Cutesy Rogue</strong> is one program, grown one small step at a time into a complete, classic terminal roguelike in <strong>Go</strong> with <code>tcell</code>. Step 1 is ten lines. Every step after it adds a handful of lines, shows you exactly which ones, and explains each new piece of Go the first time you meet it: <code>defer</code>, methods, interfaces, embedding, closures, <code>container/heap</code>, <code>encoding/gob</code>... By the end you have written all ~2,300 lines yourself and you know why every one of them is there.</p>
       <ul class="cute-list">
         <li>About 50 steps in 14 chapters, each a few lines with the reason for them.</li>
         <li>Each step starts from something you can see go wrong, then asks you to <em>try it first</em>: load the previous step into the editor, make it do the new thing, play it, then reveal how the step does it.</li>
@@ -73,7 +78,7 @@
         <li><em>Break it on purpose</em> experiments that show why a line is there.</li>
         <li><em>Play here</em>: the server builds the step, with your edits, and runs it in a terminal in the page or in your own terminal window.</li>
         <li>An exercise at the end of every chapter, checked by hidden Go tests.</li>
-        <li>Progress is kept in your browser.</li>
+        <li>The kobold in the corner keeps your progress, in this browser only.</li>
       </ul>
       <p>Every step is also a plain Go program you can run yourself from a clone of this repo:</p>
       <div class="runbox"><code>go run ./steps/01-hello-tcell</code></div>
@@ -150,6 +155,6 @@
 <script src="js/prism-go.min.js"></script>
 <script src="js/xterm.js"></script>
 <script src="data.js?v=2"></script>
-<script src="app.js?v=9"></script>
+<script src="app.js?v=10"></script>
 </body>
 </html>
