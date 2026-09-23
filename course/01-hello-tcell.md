@@ -11,13 +11,10 @@ Print `@` with `fmt.Println` and you get an `@` at the bottom of a scrolling log
 
 The question for this step is only: what is the smallest program that takes the terminal over, draws one character, and gives it back?
 
->>> 1. Run `go mod init rogue` and `go get github.com/gdamore/tcell/v2` in an empty folder (note the `/v2`).
->>> 2. Create `main.go` with `package main` and an import of `github.com/gdamore/tcell/v2`.
->>> 3. In `func main()`, create a screen: `screen, _ := tcell.NewScreen()`.
->>> 4. Call `screen.Init()` to take over the terminal.
->>> 5. Draw an `@`: `screen.SetContent(10, 5, '@', nil, tcell.StyleDefault)`, then call `screen.Show()`.
->>> 6. Wait for an event with `screen.PollEvent()`. If the program exits on its own before you see the `@`, read on: that is this step's surprise.
->>> 7. Restore the terminal with `screen.Fini()` as the last line.
+>>> 1. In an empty folder, run `go mod init rogue` and `go get github.com/gdamore/tcell/v2` (note the `/v2`).
+>>> 2. Create `main.go` with `package main`, an import of `github.com/gdamore/tcell/v2`, and a `func main()` that creates a screen with `screen, _ := tcell.NewScreen()` and calls `screen.Init()`.
+>>> 3. Still in `main`, draw an `@` with `screen.SetContent(10, 5, '@', nil, tcell.StyleDefault)` and call `screen.Show()`.
+>>> 4. Wait for an event with `screen.PollEvent()`, then restore the terminal with `screen.Fini()`. If the program exits on its own before you see the `@`, read on: that is this step's surprise.
 
 !!! A blank screen with a single `@`; the next key, click or resize ends the program and your shell is back exactly as it was.
 
