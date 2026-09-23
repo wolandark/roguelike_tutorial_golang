@@ -568,3 +568,6 @@ details.reveal > summary::-webkit-details-marker { display: none; }
 
 .try ol { margin: 6px 0 0; padding-left: 22px; }
 .try li { margin: 4px 0; line-height: 1.55; }
+
+/* show operators as typed: no ligatures (>= stays >=, != stays !=) */
+code, pre, kbd, textarea, .code-hl, .snippet, #term { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
