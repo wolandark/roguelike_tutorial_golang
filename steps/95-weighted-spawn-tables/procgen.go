@@ -75,6 +75,26 @@ var (
 	maxMonstersByFloor = []floorValue{{1, 2}, {4, 3}, {6, 5}}
 )
 
+type spawnChance struct {
+	Template *Entity
+	Weight   int
+}
+
+var (
+	itemChances = map[int][]spawnChance{
+		0: {{&healthPotion, 35}},
+		2: {{&confusionScroll, 10}},
+		4: {{&lightningScroll, 25}},
+		6: {{&fireballScroll, 25}},
+	}
+	enemyChances = map[int][]spawnChance{
+		0: {{&orc, 80}},
+		3: {{&troll, 15}},
+		5: {{&troll, 30}},
+		7: {{&troll, 60}},
+	}
+)
+
 func maxValueForFloor(values []floorValue, floor int) int {
 	current := 0
 	for _, v := range values {
@@ -86,36 +106,48 @@ func maxValueForFloor(values []floorValue, floor int) int {
 	return current
 }
 
+func entitiesAtRandom(chances map[int][]spawnChance, n, floor int) []*Entity {
+	weights := map[*Entity]int{}
+	var order []*Entity
+	for f := 0; f <= floor; f++ {
+		for _, c := range chances[f] {
+			if _, seen := weights[c.Template]; !seen {
+				order = append(order, c.Template)
+			}
+			weights[c.Template] = c.Weight
+		}
+	}
+	total := 0
+	for _, t := range order {
+		total += weights[t]
+	}
+	var chosen []*Entity
+	for i := 0; i < n && total > 0; i++ {
+		roll := rand.IntN(total)
+		for _, t := range order {
+			roll -= weights[t]
+			if roll < 0 {
+				chosen = append(chosen, t)
+				break
+			}
+		}
+	}
+	return chosen
+}
+
 func placeEntities(room RectangularRoom, dungeon *GameMap, floor int) {
 	nMonsters := rand.IntN(maxValueForFloor(maxMonstersByFloor, floor) + 1)
 	nItems := rand.IntN(maxValueForFloor(maxItemsByFloor, floor) + 1)
 
-	for i := 0; i < nMonsters; i++ {
+	monsters := entitiesAtRandom(enemyChances, nMonsters, floor)
+	items := entitiesAtRandom(itemChances, nItems, floor)
+
+	for _, template := range append(monsters, items...) {
 		x, y := room.randomTile()
 		if dungeon.EntityAt(x, y) != nil {
 			continue
 		}
-		if rand.Float64() < 0.8 {
-			orc.Spawn(dungeon, x, y)
-		} else {
-			troll.Spawn(dungeon, x, y)
-		}
-	}
-	for i := 0; i < nItems; i++ {
-		x, y := room.randomTile()
-		if dungeon.EntityAt(x, y) != nil {
-			continue
-		}
-		switch roll := rand.Float64(); {
-		case roll < 0.7:
-			healthPotion.Spawn(dungeon, x, y)
-		case roll < 0.8:
-			fireballScroll.Spawn(dungeon, x, y)
-		case roll < 0.9:
-			confusionScroll.Spawn(dungeon, x, y)
-		default:
-			lightningScroll.Spawn(dungeon, x, y)
-		}
+		template.Spawn(dungeon, x, y)
 	}
 }
 

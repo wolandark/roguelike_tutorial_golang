@@ -52,23 +52,19 @@ func (e *Entity) DefenseBonus() int {
 	return bonus
 }
 
-func (e *Entity) ToggleEquip(engine *Engine, item *Entity, addMessage bool) {
+func (e *Entity) ToggleEquip(engine *Engine, item *Entity) {
 	if item.Equippable.Equipped {
-		e.unequip(engine, item, addMessage)
+		e.unequip(engine, item)
 		return
 	}
 	if current := e.EquippedItem(item.Equippable.Type); current != nil {
-		e.unequip(engine, current, addMessage)
+		e.unequip(engine, current)
 	}
 	item.Equippable.Equipped = true
-	if addMessage {
-		engine.Log(fmt.Sprintf("You equip the %s.", item.Name), colorWhite)
-	}
+	engine.Log(fmt.Sprintf("You equip the %s.", item.Name), colorWhite)
 }
 
-func (e *Entity) unequip(engine *Engine, item *Entity, addMessage bool) {
+func (e *Entity) unequip(engine *Engine, item *Entity) {
 	item.Equippable.Equipped = false
-	if addMessage {
-		engine.Log(fmt.Sprintf("You remove the %s.", item.Name), colorWhite)
-	}
+	engine.Log(fmt.Sprintf("You remove the %s.", item.Name), colorWhite)
 }

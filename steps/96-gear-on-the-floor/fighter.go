@@ -7,14 +7,10 @@ import (
 )
 
 type Fighter struct {
-	HP, MaxHP   int
-	BaseDefense int
-	BasePower   int
+	HP, MaxHP int
+	Defense   int
+	Power     int
 }
-
-func (e *Entity) Power() int { return e.Fighter.BasePower + e.PowerBonus() }
-
-func (e *Entity) Defense() int { return e.Fighter.BaseDefense + e.DefenseBonus() }
 
 func (f *Fighter) SetHP(engine *Engine, entity *Entity, hp int) {
 	f.HP = max(0, min(hp, f.MaxHP))
@@ -40,7 +36,6 @@ func (e *Entity) Die(engine *Engine) {
 	e.Color = tcell.NewRGBColor(191, 0, 0)
 	e.BlocksMovement = false
 	e.Alive = false
-	e.AI = nil
 	e.Name = "remains of " + e.Name
 	e.RenderOrder = RenderCorpse
 
