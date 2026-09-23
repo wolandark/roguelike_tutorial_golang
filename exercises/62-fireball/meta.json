@@ -1,5 +1,0 @@
-{
- "base": "steps/62-fireball",
- "file": "consumable.go",
- "prompt": "Fireballs can be thrown across the whole visible map. Give `FireballDamageConsumable` a `MaximumRange int` field (already added) and make `Activate` return `Impossible{\"That is too far away.\"}` when the target is farther than `MaximumRange` from the consumer (`consumer.Distance`). Treat `MaximumRange == 0` as unlimited so the template keeps working. Do the range check **after** the visibility check."
-}
