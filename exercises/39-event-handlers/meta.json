@@ -1,0 +1,5 @@
+{
+ "base": "steps/39-event-handlers",
+ "file": "fighter.go",
+ "prompt": "Add `func (f *Fighter) Heal(amount int) int` to the `Fighter` component. It raises `HP` by `amount` but never above `MaxHP`, and returns how many hit points were **actually** recovered (healing 4 at 28/30 returns 2; healing at full health returns 0). Chapter 8 uses it for potions."
+}

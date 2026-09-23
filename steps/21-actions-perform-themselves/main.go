@@ -26,34 +26,21 @@ func run() error {
 
 	player := &Entity{X: screenWidth / 2, Y: screenHeight / 2, Char: '@', Color: tcell.ColorWhite}
 	npc := &Entity{X: screenWidth/2 - 5, Y: screenHeight / 2, Char: '@', Color: tcell.ColorYellow}
-	entities := []*Entity{npc, player}
-
 	gameMap := NewGameMap(mapWidth, mapHeight)
 	for x := 30; x < 33; x++ {
 		gameMap.SetTile(x, 22, wall)
 	}
 
-	for {
-		screen.Clear()
-		gameMap.Render(screen)
-		for _, e := range entities {
-			screen.SetContent(e.X, e.Y, e.Char, nil, tcell.StyleDefault.Foreground(e.Color))
-		}
-		screen.Show()
+	engine := &Engine{
+		Entities: []*Entity{npc, player},
+		Player:   player,
+		GameMap:  gameMap,
+	}
 
-		ev, ok := screen.PollEvent().(*tcell.EventKey)
-		if !ok {
-			continue
-		}
-		switch action := handleKey(ev).(type) {
-		case nil:
-		case EscapeAction:
+	for {
+		engine.Render(screen)
+		if quit := engine.HandleEvent(screen.PollEvent()); quit {
 			return nil
-		case MovementAction:
-			destX, destY := player.X+action.DX, player.Y+action.DY
-			if gameMap.InBounds(destX, destY) && gameMap.TileAt(destX, destY).Walkable {
-				player.Move(action.DX, action.DY)
-			}
 		}
 	}
 }

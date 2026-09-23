@@ -26,20 +26,19 @@ func run() error {
 
 	player := &Entity{X: screenWidth / 2, Y: screenHeight / 2, Char: '@', Color: tcell.ColorWhite}
 	npc := &Entity{X: screenWidth/2 - 5, Y: screenHeight / 2, Char: '@', Color: tcell.ColorYellow}
-	entities := []*Entity{npc, player}
-
 	gameMap := NewGameMap(mapWidth, mapHeight)
 	for x := 30; x < 33; x++ {
 		gameMap.SetTile(x, 22, wall)
 	}
 
+	engine := &Engine{
+		Entities: []*Entity{npc, player},
+		Player:   player,
+		GameMap:  gameMap,
+	}
+
 	for {
-		screen.Clear()
-		gameMap.Render(screen)
-		for _, e := range entities {
-			screen.SetContent(e.X, e.Y, e.Char, nil, tcell.StyleDefault.Foreground(e.Color))
-		}
-		screen.Show()
+		engine.Render(screen)
 
 		ev, ok := screen.PollEvent().(*tcell.EventKey)
 		if !ok {

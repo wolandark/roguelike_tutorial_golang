@@ -12,7 +12,7 @@ There are two design options. Keep everything in `main` and remember `Fini` ever
 >>> 4. End `run` with `return nil`.
 >>> 5. Rewrite `main` to call `run()`; if it returns an error, print it with `fmt.Fprintln(os.Stderr, "error:", err)` and call `os.Exit(1)`. Add `"os"` to the imports.
 
-!!! Unchanged on screen. But now any error after `Init`, in this step or in step 56, restores the terminal before it is reported.
+!!! Unchanged on screen. But now any error after `Init`, in this step or in step 59, restores the terminal before it is reported.
 
 --- reveal
 
