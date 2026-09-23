@@ -24,7 +24,7 @@ A dungeon is carved, not built: start with solid rock, cut rooms into it, join t
 
 {{file procgen.go}}
 
-- `X2` and `Y2` are *exclusive*, like the end of a Go slice: the room covers every `x` with `x >= X1 && x < X2`.
+- `X2` and `Y2` are *exclusive*, like the end of a Go slice: the room covers every `x` from `X1` up to `X2-1`.
 - `Center` returns **two values**; callers write `x, y := r.Center()`.
 - `carve` loops from `X1+1` to `X2-1`. Its lower-case name means *unexported*: visible inside this package only, a signal that it is a helper.
 
