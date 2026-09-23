@@ -9,7 +9,9 @@ Every turn-based game is one loop: **draw** the world, **wait** for input, **upd
 
 Step 5 draws once and then waits. To move something, the drawing has to happen again after every input, and the `@` needs a position that can change. Where should the position live? Two integers in `run` are enough for now; they become a struct in the next chapter when there is more than one thing on screen.
 
->>> Give the `@` a position, start it in the middle of an 80 by 50 screen (name those two numbers as constants), and restructure `run` so that every loop iteration clears the buffer, draws the `@` at its position and shows it, then waits for an event. Drop the greeting.
+>>> 1. In `main.go`, add a `const` block with `screenWidth = 80` and `screenHeight = 50`.
+>>> 2. In `run`, delete the greeting and the `@` drawing, and declare `playerX, playerY := screenWidth/2, screenHeight/2`.
+>>> 3. Move the drawing into the loop: at the top of each iteration call `screen.Clear()`, then `SetContent` the `@` at `playerX, playerY`, then `screen.Show()`, then poll and return on a key as before.
 
 !!! The `@` sits in the middle of the screen. Any key still quits; that is the next step.
 

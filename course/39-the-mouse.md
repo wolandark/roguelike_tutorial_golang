@@ -4,7 +4,11 @@
 
 A `%` on the floor could be an orc or a troll; a `o` might be standing on a potion. Hovering the mouse over a cell and reading what is there is cheap to add: tcell reports mouse events if asked, the engine remembers the last position, and drawing looks up the names on that cell. The names line also becomes the "look" command in chapter 9.
 
->>> Call `screen.EnableMouse()` after `Init`. Add `MouseX, MouseY` to the engine and a `trackMouse` that records the position of any `*tcell.EventMouse` inside the map (call it for every non-key event in the main handler). Add `getNamesAt(m, x, y)` that joins the names of every entity on a visible cell with `, `, and draw the result on row 44.
+>>> 1. In `main.go`, call `screen.EnableMouse()` right after the `defer`.
+>>> 2. In `engine.go`, add the fields `MouseX, MouseY int` to `Engine`.
+>>> 3. In `input.go`, add a function `func trackMouse(engine *Engine, ev tcell.Event)` that stores the position of a `*tcell.EventMouse` inside the map, and call it for every non-key event in `MainGameEventHandler.HandleEvent`.
+>>> 4. In `render_functions.go`, add a function `func getNamesAt(m *GameMap, x, y int) string` that joins the names of every entity on a visible cell, and `func renderNamesAtMouse(screen tcell.Screen, x, y int, engine *Engine)` that draws them.
+>>> 5. In `engine.go`, call `renderNamesAtMouse(screen, 21, 44, e)` in `Render`.
 
 !!! Move the mouse over monsters and corpses; their names appear above the log. The in-page terminal supports the mouse too.
 

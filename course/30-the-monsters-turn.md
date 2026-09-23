@@ -4,7 +4,8 @@
 
 Monsters never act. In a turn-based game the rule is: the player acts, then every other entity acts, then the screen is redrawn. The place for that is right after the player's action in `HandleEvent`. Real behaviour needs hit points and a brain, which is the next chapter; for now each monster just announces that it would like a turn, which proves the loop works and shows the order of events.
 
->>> Add `HandleEnemyTurns` to the engine that logs a complaint for every entity except the player, and call it after the player's action and before the field of view is recomputed.
+>>> 1. In `engine.go`, add a method `func (e *Engine) HandleEnemyTurns()` that logs a message for every entity that is not the player.
+>>> 2. In `HandleEvent`, call it after the player's action and before `UpdateFOV`. Add `"fmt"` to the imports.
 
 !!! Every move fills the message area with grumbling monsters.
 

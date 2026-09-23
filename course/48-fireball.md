@@ -4,7 +4,10 @@
 
 An area effect: everything within a radius of the target takes damage, you included if you stand too close. The cursor handler needs one more thing so the player can see what they are about to hit: a hook to draw extra decoration, here a red frame around the cursor. That is an optional function field, `nil` when unused, and the reason step 40 kept `drawFrame` border-only.
 
->>> Add `OnRenderExtra func(screen)` to `SelectIndexHandler`, called after the game is drawn if set. Add `NewAreaRangedAttackHandler(engine, radius, callback)` that builds a single-target handler and sets a closure drawing a red frame of `2*radius+1` cells around the cursor. Add `FireballDamageConsumable{Damage, Radius}`: visible cell required, damage every actor within `Radius` (king's move), `Impossible` if nobody was hit. Template, 10% spawn chance.
+>>> 1. In `input.go`, add a field `OnRenderExtra func(screen tcell.Screen)` to `SelectIndexHandler` and call it in `OnRender` when it is not nil.
+>>> 2. Add a function `func NewAreaRangedAttackHandler(engine *Engine, radius int, callback func(x, y int) Action) *SelectIndexHandler` that sets `OnRenderExtra` to draw a red frame around the cursor.
+>>> 3. In `consumable.go`, declare a struct `FireballDamageConsumable` with `Damage int` and `Radius int`. Its `GetAction` opens the area handler; its `Activate` damages every actor within `Radius` of the target, or returns `Impossible`.
+>>> 4. In `entity_factories.go`, add a `fireballScroll` template; in `procgen.go` give it a 10% chance.
 
 !!! A red `~`. Use it and a red square follows the cursor; confirm on a group of monsters. Stand inside the square yourself and learn why the message says "The Player is engulfed in a fiery explosion".
 

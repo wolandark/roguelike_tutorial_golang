@@ -4,7 +4,10 @@
 
 Loading automatically on start is fine for testing and wrong for a game: the player should choose between a new game and continuing, and be told when there is nothing to continue. That is a title screen, one more handler, and a **popup** for the message, another handler that draws its parent dimmed and closes on any key. It is also the moment to move set-up code out of `main.go`, which from now on is only the loop.
 
->>> Create `setup_game.go` with `NewGame()` (the set-up from `main.go`), a `MainMenu` handler with `n`/`c`/`q` (and Escape), and a `PopupMessage` handler with a parent and a line of text. Continuing with no save (`errors.Is(err, os.ErrNotExist)`) or a bad save shows a popup. `main.go` starts from `MainMenu{}`.
+>>> 1. Create `setup_game.go` and move the new-game code from `main.go` into a function `func NewGame() *Engine`.
+>>> 2. In the same file, declare `type MainMenu struct{}` with an `OnRender` (title and three options) and a `HandleEvent` (`n` new game, `c` load, `q` or Escape quit).
+>>> 3. Declare a struct `PopupMessage` with fields `Parent EventHandler` and `Text string`, an `OnRender` that dims the parent and writes the text, and a `HandleEvent` that returns `Parent` on any key. Add a helper `func dimScreen(screen tcell.Screen)`.
+>>> 4. In `main.go`, start the handler loop from `MainMenu{}`. In `colors.go`, add `colorMenuTitle` and `colorMenuText`.
 
 !!! The title screen. Press `c` before ever saving: the screen dims and "No saved game to load." appears; any key returns to the menu. `n` starts a game; Escape saves; `c` next time continues it.
 

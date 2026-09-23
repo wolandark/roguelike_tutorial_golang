@@ -9,7 +9,12 @@ A dungeon is carved, not built: start with solid rock, cut rooms into it, join t
 
 `NewGameMap` fills the map with floor and we place walls by hand. For carving, the default has to flip: everything is wall, and a room is a rectangle of floor. What should a room remember? Its corners are enough: from them you can compute its centre (where to put the player, where tunnels start) and, later, whether it overlaps another room. One subtlety decides how the dungeon looks: if two rooms are carved right next to each other they merge into one hall, unless each room keeps a ring of wall around itself. So carving the *inside* only is a design choice, not an accident.
 
->>> Flip `NewGameMap` to fill with `wall`. Create `procgen.go` with a `RectangularRoom` (two corners, the far ones exclusive like slice bounds), `NewRectangularRoom(x, y, width, height)`, `Center()` returning two ints, and a `carve` method that turns the room's inside, excluding a one-tile border, into floor. In `main.go`, carve two rooms and put the player and the NPC at their centres.
+>>> 1. In `gamemap.go`, change `NewGameMap` to fill the map with `wall` instead of `floor`.
+>>> 2. Create `procgen.go` and declare a struct `RectangularRoom` with fields `X1, Y1, X2, Y2 int`.
+>>> 3. Add a function `func NewRectangularRoom(x, y, width, height int) RectangularRoom` that returns a room from `x, y` to `x+width, y+height`.
+>>> 4. Add a method `func (r RectangularRoom) Center() (int, int)` returning the middle cell.
+>>> 5. Add a method `func (r RectangularRoom) carve(m *GameMap)` that sets every cell from `X1+1` to `X2-1` and `Y1+1` to `Y2-1` to `floor`.
+>>> 6. In `main.go`, delete the three wall cells, make two rooms with `NewRectangularRoom`, carve both, and place the player and the NPC at their centres.
 
 !!! Two rooms of light blue in a sea of dark blue. The `@` is in the left one and cannot leave it.
 

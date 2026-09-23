@@ -4,7 +4,9 @@
 
 When the player has enough XP, the game should ask which attribute to improve, and unlike every other menu the question cannot be dismissed. Where does that interruption belong? After the enemies' turn in `runAction`, next to the game-over check: both are "the state changed, switch modes". A character sheet on `c` is the same window pattern as before.
 
->>> In `runAction`, after the game-over check, return a `LevelUpHandler` when the player `RequiresLevelUp`. The handler draws three choices (`a` +20 max HP, `b` +1 power, `c` +1 defense), logs "Invalid entry." and stays on anything else, and returns to the main game after a choice. Add a `CharacterScreenHandler` (parent, level, XP, next threshold, attack, defense) bound to `c`.
+>>> 1. In `input.go`, in `runAction`, after the game-over check, return a `LevelUpHandler` when `engine.Player.Level.RequiresLevelUp()`.
+>>> 2. Declare a struct `LevelUpHandler` with a field `Engine *Engine`, an `OnRender` showing three choices, and a `HandleEvent` that applies `a`, `b` or `c` and logs "Invalid entry." for anything else, staying open.
+>>> 3. Declare a struct `CharacterScreenHandler` with fields `Engine *Engine` and `Parent EventHandler`, an `OnRender` showing level, XP and stats, and a `HandleEvent` that returns `Parent` on any key. Open it for `c`.
 
 !!! Kill a few orcs. At 350 XP the level-up window appears and will not go away until you pick `a`, `b` or `c`. `c` in the game shows your sheet.
 

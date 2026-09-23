@@ -6,7 +6,9 @@ Rooms and tunnels by hand are fine for two rooms. A level needs dozens, in rando
 
 To reject overlaps you need a test for two rectangles. Think about when two rooms do *not* overlap: one is entirely to the left, right, above or below the other. Negate that and you have the test.
 
->>> Add `Intersects(other RectangularRoom) bool` and `GenerateDungeon(maxRooms, roomMinSize, roomMaxSize, mapWidth, mapHeight int, player *Entity) *GameMap`, which makes a map, tries `maxRooms` random rooms, keeps the non-overlapping ones, puts the player in the first room's centre and tunnels each new room to the previous one. Use it from `main.go` with three named constants (30 attempts, sizes 6 to 10).
+>>> 1. In `procgen.go`, add a method `func (r RectangularRoom) Intersects(other RectangularRoom) bool`.
+>>> 2. Add a function `func GenerateDungeon(maxRooms, roomMinSize, roomMaxSize, mapWidth, mapHeight int, player *Entity) *GameMap` that makes a map, tries `maxRooms` random rooms, skips any that intersect an earlier one, carves the rest, puts the player at the first room's centre and tunnels each later room to the previous one.
+>>> 3. In `main.go`, add the constants `roomMaxSize = 10`, `roomMinSize = 6`, `maxRooms = 30`, replace the hand-made rooms and the NPC with `gameMap := GenerateDungeon(...)`, and start the player as `&Entity{Char: '@', Color: tcell.ColorWhite}`.
 
 !!! A different dungeon every time. You start in the middle of a room; every room is reachable.
 

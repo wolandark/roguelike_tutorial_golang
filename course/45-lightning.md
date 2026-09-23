@@ -9,7 +9,10 @@ Three scrolls: lightning picks its own target, confusion and fireball need you t
 
 A lightning scroll strikes the nearest visible enemy within range. The consumable interface from step 42 fits without changes: `GetAction` returns an item action, `Activate` finds the target. Finding "the closest of these" is a loop that keeps the best candidate so far; starting the best distance at "just out of range" means the first in-range candidate always wins and out-of-range ones never do. The map needs one helper, "all living fighters", so scrolls do not filter corpses themselves.
 
->>> Add `Actors()` to the map. Add `LightningDamageConsumable{Damage, MaximumRange}` whose `Activate` scans visible actors other than the consumer for the closest within range, is `Impossible` if none, otherwise logs, damages and consumes. Add a `lightningScroll` template (`~`, yellow) and make item placement 70% potions, 30% scrolls.
+>>> 1. In `gamemap.go`, add a method `func (m *GameMap) Actors() []*Entity` returning every living fighter.
+>>> 2. In `consumable.go`, declare a struct `LightningDamageConsumable` with `Damage int` and `MaximumRange int`, and its `GetAction` (an `ItemAction`) and `Activate` (strike the closest visible actor in range, or `Impossible`).
+>>> 3. In `entity_factories.go`, add a `lightningScroll` template (`~`, yellow).
+>>> 4. In `procgen.go`, spawn a potion 70% of the time and a lightning scroll otherwise.
 
 !!! Pick up a yellow `~`, wait for an orc to come into view, use it from `i`. With nobody near: "No enemy is close enough to strike." in grey, scroll kept.
 

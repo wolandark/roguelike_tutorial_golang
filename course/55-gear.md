@@ -9,7 +9,11 @@ Daggers, swords, leather armour and chain mail: items that are worn rather than 
 
 An item that is worn needs a slot (weapon or armour), bonuses, and a way to know whether it is currently worn. The Python tutorial stores that last fact on the *wearer*, as pointers to the worn items. Those items also live in the inventory, so after a gob round trip (step 49) the wearer's pointers would point at *copies*. Keeping one `Equipped` flag **on the item** means there are no shared pointers and nothing to re-link after loading; "what is in my weapon slot" becomes a scan of the inventory, which is at most 26 items.
 
->>> Create `equipment.go` with `EquipmentType` (`Weapon`, `Armor`), an `Equippable` component (type, bonuses, `Equipped`), and helpers on `Entity`: `EquippedItem(slot)`, `ItemIsEquipped`, `PowerBonus`, `DefenseBonus`, `ToggleEquip(engine, item, addMessage)` that unequips the slot's current item first. Add the component to `Entity` (copied in `Spawn`), define `IsItem` as consumable or equippable and use it in pickup, add four templates, and put swords on floor 4 and chain mail on floor 6 in the spawn table.
+>>> 1. Create `equipment.go` with `type EquipmentType int` and the constants `Weapon` and `Armor` using `iota`.
+>>> 2. Declare a struct `Equippable` with fields `Type EquipmentType`, `PowerBonus int`, `DefenseBonus int` and `Equipped bool`.
+>>> 3. Add methods on `Entity`: `EquippedItem(slot EquipmentType) *Entity`, `ItemIsEquipped(item *Entity) bool`, `PowerBonus() int`, `DefenseBonus() int`, and `ToggleEquip(engine *Engine, item *Entity, addMessage bool)` with a helper `unequip`.
+>>> 4. In `entity.go`, add a field `Equippable *Equippable`, copy it in `Spawn`, and add a method `func (e *Entity) IsItem() bool`. Use `IsItem` in `PickupAction`.
+>>> 5. In `entity_factories.go`, add the templates `dagger`, `sword`, `leatherArmor` and `chainMail`; add `sword` on floor 4 and `chainMail` on floor 6 in `itemChances`.
 
 !!! On deeper floors you can find and pick up `/` and `[`. Selecting one in the inventory does nothing sensible yet.
 

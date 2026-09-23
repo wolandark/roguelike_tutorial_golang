@@ -4,7 +4,12 @@
 
 Gear exists but does nothing. Attack and defense must become base values plus bonuses, and because the bonuses need the inventory, the sums belong on `Entity`, not on `Fighter`. Selecting gear in the inventory should equip or remove it, the menu should mark worn items, dropping something worn should take it off first, and the player should start with a dagger and leather armour so the numbers stay what they were.
 
->>> Rename the Fighter fields to `BaseDefense`/`BasePower`; add `Power()` and `Defense()` methods on `Entity` that add the bonuses, and use them in melee, the character sheet and the level-up menu (base values there). Add `EquipAction`; make `useItem` return it for equippables; mark worn items `(E)` in the menu; unequip in `Drop`. Lower the player to power 2 / defense 1 and give them a dagger and leather armour, equipped silently, in `NewGame`.
+>>> 1. In `fighter.go`, rename the fields to `BaseDefense` and `BasePower`, and add two methods on `Entity`: `Power() int` and `Defense() int`, each adding the equipment bonus.
+>>> 2. In `entity_factories.go`, set the player to `BasePower: 2, BaseDefense: 1` and rename the fields in the other templates.
+>>> 3. In `actions.go`, use `entity.Power() - target.Defense()` in melee, and declare a struct `EquipAction` with a field `Item *Entity` whose `Perform` calls `ToggleEquip`.
+>>> 4. In `inventory.go`, unequip an item in `Drop` before removing it.
+>>> 5. In `input.go`, return an `EquipAction` from `useItem` for equippable items, add ` (E)` to worn items in the menu, and use the base values in the level-up menu and `Power()`/`Defense()` on the character sheet. In `level.go`, raise the base fields.
+>>> 6. In `setup_game.go`, give the new player a dagger and leather armour and equip them silently.
 
 !!! `i` shows `(a) Dagger (E)` and `(b) Leather Armor (E)`; `c` shows attack 4, defense 2. Find a sword on floor 4 or deeper and equip it: "You remove the Dagger." then "You equip the Sword." in one turn.
 

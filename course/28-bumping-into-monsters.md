@@ -6,7 +6,13 @@ Walking *into* a monster should attack it; walking into an empty cell should mov
 
 There is also a small practical problem: there is no message log yet and we cannot `fmt.Println` while tcell owns the screen. The engine will keep the last few messages and draw them under the map, a stand-in until chapter 7.
 
->>> Rewrite `actions.go`: an `ActionWithDirection` struct with `DX, DY`, a `Dest(entity)` and a `BlockingEntity(engine, entity)` helper; `MeleeAction`, `MovementAction` and `BumpAction` that each embed it. `MeleeAction` logs "You kick the <name>, much to its annoyance!"; `BumpAction` delegates to melee if something blocks the destination, otherwise to movement. Keys return `BumpAction`s. Give the engine a `Messages []string`, a `Log` that keeps the last four, and draw them under the map.
+>>> 1. In `actions.go`, declare a struct `ActionWithDirection` with fields `DX, DY int`.
+>>> 2. Add a method `func (a ActionWithDirection) Dest(entity *Entity) (int, int)` and a method `func (a ActionWithDirection) BlockingEntity(engine *Engine, entity *Entity) *Entity`.
+>>> 3. Redeclare `MovementAction` as `struct{ ActionWithDirection }` (embedding) and use `a.Dest(entity)` in its `Perform`.
+>>> 4. Declare `type MeleeAction struct{ ActionWithDirection }` with a `Perform` that logs "You kick the <name>, much to its annoyance!" when something blocks the destination.
+>>> 5. Declare `type BumpAction struct{ ActionWithDirection }` with a `Perform` that runs `MeleeAction` if something blocks the destination and `MovementAction` otherwise.
+>>> 6. In `input.go`, make the four movement cases return `BumpAction{ActionWithDirection{dx, dy}}`.
+>>> 7. In `engine.go`, add a field `Messages []string`, a method `func (e *Engine) Log(msg string)` that keeps the last four, and draw them under the map in `Render`.
 
 !!! Walk into an orc: "You kick the Orc, much to its annoyance!" appears under the map.
 

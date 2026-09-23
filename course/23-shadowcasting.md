@@ -6,7 +6,11 @@ The naive rule lets you see through walls. Real line of sight: a cell is visible
 
 This is the one piece of the game where you are not expected to derive the code yourself. Read it, then poke at it with the experiments.
 
->>> Create `fov.go` with a `ComputeFOV` that clears `Visible`, marks the viewer's cell and casts light into each of eight octants using a multiplier table, and a `blocksSight(x, y)` that treats out-of-map cells as rock and otherwise asks the tile's `Transparent` flag. Remove the naive `ComputeFOV` from `gamemap.go`, or the compiler will complain about a duplicate.
+>>> 1. Create `fov.go` with a package variable `var octants = [8][4]int{...}` holding the eight multiplier rows.
+>>> 2. Add a method `func (m *GameMap) blocksSight(x, y int) bool` that is true outside the map or for a non-transparent tile.
+>>> 3. Add the recursive method `func (m *GameMap) castLight(cx, cy, radius, row int, start, end float64, xx, xy, yx, yy int)`.
+>>> 4. Add a new `func (m *GameMap) ComputeFOV(ox, oy, radius int)` that clears `Visible`, marks the viewer's cell and calls `castLight` once per octant.
+>>> 5. Delete the old `ComputeFOV` from `gamemap.go`.
 
 !!! Rooms light up as you enter them and corridors reveal themselves cell by cell. Walls at the edge of your view are lit, so rooms have outlines. Stand in a doorway and look at the shadow the frame casts.
 

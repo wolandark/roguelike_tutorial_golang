@@ -6,7 +6,16 @@ An item is an entity lying on the floor until someone carries it. Two new abilit
 
 This step puts potions on the floor and defines the components; picking them up is the next step, so nothing changes in play yet.
 
->>> Create `inventory.go` (capacity, items, `Remove`, `Drop`) and `consumable.go` (the `Consumable` interface with `GetAction` returning `(Action, EventHandler)` and `Activate`; a `consume` helper; `HealingConsumable`). Add `Inventory` and `Consumable` fields to `Entity` and copy the inventory in `Spawn`. Add `Fighter.Heal(amount) int` returning what was actually recovered. Add `ItemAction` (item, target position; `Perform` calls `Activate`). Add a `healthPotion` template, `EntityAt` and `RemoveEntity` to the map, and place 0 to 2 potions per room.
+>>> 1. Create `inventory.go` with a struct `Inventory` (`Capacity int`, `Items []*Entity`), a method `Remove(item *Entity)` and a method `Drop(engine *Engine, owner, item *Entity)`.
+>>> 2. Create `consumable.go` with an interface `Consumable` with two methods: `GetAction(engine *Engine, consumer, item *Entity) (Action, EventHandler)` and `Activate(engine *Engine, action ItemAction, consumer *Entity) error`.
+>>> 3. In the same file, add a helper `func consume(consumer, item *Entity)`, a struct `HealingConsumable` with `Amount int`, and its two methods (heal, or `Impossible` at full health).
+>>> 4. In `entity.go`, add the fields `Inventory *Inventory` and `Consumable Consumable`, and make `Spawn` copy the inventory and its slice.
+>>> 5. In `fighter.go`, add a method `func (f *Fighter) Heal(amount int) int` that returns how much was recovered.
+>>> 6. In `actions.go`, declare a struct `ItemAction` (`Item *Entity`, `TargetX, TargetY int`) with `TargetActor` and a `Perform` that calls `Item.Consumable.Activate`.
+>>> 7. In `gamemap.go`, add the methods `EntityAt(x, y int) *Entity` and `RemoveEntity(entity *Entity)`.
+>>> 8. In `entity_factories.go`, give the player `Inventory: &Inventory{Capacity: 26}` and add a `healthPotion` template.
+>>> 9. In `procgen.go`, add a method `func (r RectangularRoom) randomTile() (int, int)`, add a `maxItems` parameter to `placeEntities` and `maxItemsPerRoom` to `GenerateDungeon`, and place potions. In `main.go`, add the constant and pass it.
+>>> 10. In `colors.go`, add `colorHealthRecovered`.
 
 !!! Purple `!` in some rooms. You can walk over them; nothing happens yet.
 
