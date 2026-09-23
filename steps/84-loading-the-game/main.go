@@ -31,13 +31,16 @@ func run() error {
 	defer screen.Fini()
 	screen.EnableMouse()
 
-	gameMap := NewGameMap(mapWidth, mapHeight)
-	player := playerTemplate.Spawn(gameMap, 0, 0)
-	GenerateDungeon(gameMap, maxRooms, roomMinSize, roomMaxSize, maxMonstersPerRoom, maxItemsPerRoom, player)
+	engine, err := LoadGame(saveFile)
+	if err != nil {
+		gameMap := NewGameMap(mapWidth, mapHeight)
+		player := playerTemplate.Spawn(gameMap, 0, 0)
+		GenerateDungeon(gameMap, maxRooms, roomMinSize, roomMaxSize, maxMonstersPerRoom, maxItemsPerRoom, player)
 
-	engine := &Engine{Player: player, GameMap: gameMap, MessageLog: &MessageLog{}}
-	engine.UpdateFOV()
-	engine.Log("Hello and welcome, adventurer, to yet another dungeon!", colorWelcomeText)
+		engine = &Engine{Player: player, GameMap: gameMap, MessageLog: &MessageLog{}}
+		engine.UpdateFOV()
+		engine.Log("Hello and welcome, adventurer, to yet another dungeon!", colorWelcomeText)
+	}
 
 	var handler EventHandler = &MainGameEventHandler{Engine: engine}
 	for handler != nil {

@@ -36,3 +36,19 @@ func (e *Engine) SaveAs(path string) error {
 	defer f.Close()
 	return gob.NewEncoder(f).Encode(data)
 }
+
+func LoadGame(path string) (*Engine, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	var data saveData
+	if err := gob.NewDecoder(f).Decode(&data); err != nil {
+		return nil, err
+	}
+	engine := &Engine{GameMap: data.GameMap, MessageLog: data.MessageLog}
+	engine.Player = data.GameMap.Entities[data.PlayerIndex]
+	engine.UpdateFOV()
+	return engine, nil
+}

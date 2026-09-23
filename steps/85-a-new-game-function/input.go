@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/gdamore/tcell/v2"
 )
@@ -125,6 +126,7 @@ func (h *GameOverEventHandler) OnRender(screen tcell.Screen) { h.Engine.Render(s
 func (h *GameOverEventHandler) HandleEvent(ev tcell.Event) EventHandler {
 	if key, ok := ev.(*tcell.EventKey); ok {
 		if key.Key() == tcell.KeyEscape || key.Key() == tcell.KeyCtrlC {
+			os.Remove(saveFile)
 			return nil
 		}
 	}

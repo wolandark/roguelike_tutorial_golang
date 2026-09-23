@@ -1,5 +1,0 @@
-{
- "base": "steps/87-levelling-up",
- "file": "actions.go",
- "prompt": "A breather between floors. Change `TakeStairsAction` so that descending also heals the player by **a quarter of their maximum HP** (integer division, `MaxHP / 4`) using `Fighter.Heal`. If any HP was actually recovered, log `You rest for a moment and recover <n> HP.` in `colorHealthRecovered` after the descend message. The stairs check and the descend message stay as they are."
-}
