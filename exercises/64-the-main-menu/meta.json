@@ -1,0 +1,5 @@
+{
+ "base": "steps/64-the-main-menu",
+ "file": "saveload.go",
+ "prompt": "Save files outlive code changes. Add a `Version int` field to `saveData` and a constant `saveVersion = 1`. `SaveAs` must write the current version and `LoadGame` must return an error whose text contains the word `version` when the file's version differs (`fmt.Errorf(\"save file version %d, want %d\", got, saveVersion)`). A file with the right version loads as before."
+}

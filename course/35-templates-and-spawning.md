@@ -7,7 +7,7 @@ A dungeon needs inhabitants. This chapter fills rooms with orcs and trolls, make
 
 ### The problem
 
-Writing `&Entity{Char: 'o', Color: ..., Name: "Orc"}` every time an orc appears is repetitive and error-prone. We want one description per kind of creature, a **template**, and a way to stamp copies out of it. In Python the tutorial uses `copy.deepcopy`. In Go a struct assignment already copies, and a method with a *value receiver* receives a copy for free. The catch, which bites in step 41, is that copying a struct copies pointers inside it, not what they point to; for now `Entity` has no pointers, so a plain copy is a full copy.
+Writing `&Entity{Char: 'o', Color: ..., Name: "Orc"}` every time an orc appears is repetitive and error-prone. We want one description per kind of creature, a **template**, and a way to stamp copies out of it. In Python the tutorial uses `copy.deepcopy`. In Go a struct assignment already copies, and a method with a *value receiver* receives a copy for free. The catch, which bites in step 45, is that copying a struct copies pointers inside it, not what they point to; for now `Entity` has no pointers, so a plain copy is a full copy.
 
 >>> 1. In `entity.go`, add the fields `Name string` and `BlocksMovement bool` to `Entity`.
 >>> 2. Add a method with a *value* receiver, `func (e Entity) Spawn(x, y int) *Entity`, that copies `e`, sets the copy's position and returns a pointer to the copy.
