@@ -2,7 +2,7 @@
 
 ### The problem
 
-A floor with no walls is a field. Walls need a second look, and they will need two more facts the floor also has: can you stand on it, can you see through it (chapter 5). A look plus those two facts is a **tile**, and floor and wall are the first two kinds. This step only draws them; the map that stores them is next.
+A floor with no walls is a field. Walls need a second look, and they will need two more facts the floor also has: can you stand on it, can you see through it (the field of view, from step 29). A look plus those two facts is a **tile**, and floor and wall are the first two kinds. This step only draws them; the map that stores them is next.
 
 >>> 1. In `tiles.go`, declare a struct `Tile` with fields `Walkable bool`, `Transparent bool` and `Dark Glyph`.
 >>> 2. Replace `floorGlyph` with two package variables in a `var ( )` block: `floor` (walkable, transparent, a space on RGB 50, 50, 150) and `wall` (neither, a space on RGB 0, 0, 100).

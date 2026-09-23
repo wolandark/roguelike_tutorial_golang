@@ -21,4 +21,4 @@ Arrows and `hjkl` cannot move diagonally, and roguelike players expect `yubn` fo
 
 --- end
 
-%%% Add `'w': {0, -1}, 'a': {-1, 0}, 's': {0, 1}, 'd': {1, 0}` to `moveRunes` for WASD. One line each, nothing else changes. (You will want to remove `d` again in chapter 8, where it drops items.)
+%%% Add `'w': {0, -1}, 'a': {-1, 0}, 's': {0, 1}, 'd': {1, 0}` to `moveRunes` for WASD. One line each, nothing else changes. (You will want to remove `d` again in step 76, where it drops items.)

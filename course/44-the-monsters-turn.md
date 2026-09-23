@@ -17,4 +17,4 @@ Monsters never act. In a turn-based game the rule is: the player acts, then ever
 
 --- end
 
-%%% Move `HandleEnemyTurns` *before* the player's action. The messages look the same, but from chapter 6 on the difference is real: monsters would move before you do, and a monster next to you would hit you before your attack lands. Order of turns is a design decision; roguelikes let the player go first.
+%%% Move `HandleEnemyTurns` *before* the player's action. The messages look the same, but from step 51 on the difference is real: monsters would move before you do, and a monster next to you would hit you before your attack lands. Order of turns is a design decision; roguelikes let the player go first.

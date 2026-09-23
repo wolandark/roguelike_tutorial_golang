@@ -14,7 +14,7 @@ Two monsters next to the player is a demo, not a dungeon. Each room should get a
 
 {{diff procgen.go}}
 
-- `rand.IntN(maxMonsters + 1)` is 0 to `maxMonsters`. `X1 + 1 + rand.IntN(X2-X1-1)` stays off the wall ring. `rand.Float64()` is uniform in `[0, 1)`, so `< 0.8` is an 80% chance.
+- `rand.IntN(maxMonsters + 1)` is 0 to `maxMonsters`. `X1 + 1 + rand.IntN(X2-X1-1)` stays off the wall ring. `rand.Float64()` returns a random number that is at least 0 and less than 1, so `< 0.8` is true 80% of the time.
 - The first room is included, so you may wake up next to an orc; the chapter exercise fixes that.
 
 {{diff main.go}}

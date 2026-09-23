@@ -3,11 +3,11 @@
 
 ### In this chapter
 
-A dungeon needs inhabitants. This chapter fills rooms with orcs and trolls, makes them solid, lets you attack by walking into them, adds the rest of the traditional keys, and gives monsters a turn of their own (a placeholder turn; teeth come in chapter 6). The Go theme is copying: when is a struct a copy, when is it shared, and how to make many orcs from one description.
+A dungeon needs inhabitants. This chapter fills rooms with orcs and trolls, makes them solid, lets you attack by walking into them, adds the rest of the traditional keys, and gives monsters a turn of their own (a placeholder turn; teeth come in step 51). The Go theme is copying: when is a struct a copy, when is it shared, and how to make many orcs from one description.
 
 ### The problem
 
-Writing `&Entity{Char: 'o', Color: ..., Name: "Orc"}` every time an orc appears is repetitive and error-prone. We want one description per kind of creature, a **template**, and a way to stamp copies out of it. In Python the tutorial uses `copy.deepcopy`. In Go a struct assignment already copies, and a method with a *value receiver* receives a copy for free. The catch, which bites in step 46, is that copying a struct copies pointers inside it, not what they point to; for now `Entity` has no pointers, so a plain copy is a full copy.
+Writing `&Entity{Char: 'o', Color: ..., Name: "Orc"}` every time an orc appears is repetitive and error-prone. We want one description per kind of creature, a **template**, and a way to stamp copies out of it. In Python the tutorial uses `copy.deepcopy`. In Go a struct assignment already copies, and a method with a *value receiver* receives a copy for free. The catch, which bites in step 45, is that copying a struct copies pointers inside it, not what they point to; for now `Entity` has no pointers, so a plain copy is a full copy.
 
 >>> 1. In `entity.go`, add the fields `Name string` and `BlocksMovement bool` to `Entity`.
 >>> 2. Add a method with a *value* receiver, `func (e Entity) Spawn(x, y int) *Entity`, that copies `e`, sets the copy's position and returns a pointer to the copy.

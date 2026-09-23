@@ -2,7 +2,7 @@
 
 ### The problem
 
-Kill an orc, step onto its corpse, and let a troll follow you: sometimes the `%` is drawn over the troll. Entities are drawn in list order, and whatever is drawn last wins. We want corpses at the bottom, items (chapter 8) above them, living actors on top. That is a sort key per entity and a sort before drawing, but the sort must not disturb the list itself, because list order also decides who acts first.
+Kill an orc, step onto its corpse, and let a troll follow you: sometimes the `%` is drawn over the troll. Entities are drawn in list order, and whatever is drawn last wins. We want corpses at the bottom, items (step 70) above them, living actors on top. That is a sort key per entity and a sort before drawing, but the sort must not disturb the list itself, because list order also decides who acts first.
 
 >>> 1. In `entity.go`, declare `type RenderOrder int` with the constants `RenderCorpse`, `RenderItem`, `RenderActor` using `iota`, and add a field `RenderOrder RenderOrder` to `Entity`.
 >>> 2. In `entity_factories.go`, set `RenderOrder: RenderActor` on the three templates.
@@ -28,4 +28,4 @@ Kill an orc, step onto its corpse, and let a troll follow you: sometimes the `%`
 
 --- end
 
-%%% Sort `m.Entities` itself instead of a copy. Nothing looks different, but the player is now drawn last *and acts last* among equals; in chapter 8, dropping an item and picking it up again reorders the list under you. Sorting a copy keeps drawing and logic separate.
+%%% Sort `m.Entities` itself instead of a copy. Nothing looks different, but the player is now drawn last *and acts last* among equals; from step 73 on, picking items up and dropping them reorders the list under you. Sorting a copy keeps drawing and logic separate.
