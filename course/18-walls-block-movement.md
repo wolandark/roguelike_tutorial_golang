@@ -21,7 +21,7 @@ Walk into the wall in step 13: you pass through. The movement code changes x and
 
 {{diff gamemap.go}}
 
-- `InBounds` is four comparisons: the cell is inside when `x` is at least 0 and below `Width`, and the same for `y` and `Height`. It exists because `TileAt` on a cell outside the map either panics or, for some coordinates, quietly returns a cell from a neighbouring row (see the experiment in step 17). Every caller that computes a coordinate checks it first.
+- `InBounds` is four comparisons: the cell is inside when `x` is at least 0 and below `Width`, and the same for `y` and `Height`. It exists because `TileAt` on a cell outside the map panics (see the experiment in step 17). Every caller that computes a coordinate checks it first.
 
 {{diff actions.go}}
 

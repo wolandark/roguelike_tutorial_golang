@@ -14,8 +14,10 @@ func (e *Engine) HandleEvent(ev tcell.Event) (quit bool) {
 		return false
 	}
 	if key.Key() == tcell.KeyRune && key.Rune() == 'm' {
-		for i := range e.GameMap.Explored {
-			e.GameMap.Explored[i] = true
+		for _, row := range e.GameMap.Explored {
+			for x := range row {
+				row[x] = true
+			}
 		}
 		return false
 	}

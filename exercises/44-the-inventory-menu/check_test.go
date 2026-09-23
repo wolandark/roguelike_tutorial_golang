@@ -7,8 +7,10 @@ import (
 
 func TestPoison(t *testing.T) {
 	m := NewGameMap(10, 10)
-	for i := range m.Tiles {
-		m.Tiles[i] = floor
+	for y := range m.Tiles {
+		for x := range m.Tiles[y] {
+			m.Tiles[y][x] = floor
+		}
 	}
 	e := &Engine{GameMap: m, MessageLog: &MessageLog{}}
 	e.Player = playerTemplate.Spawn(m, 2, 2)

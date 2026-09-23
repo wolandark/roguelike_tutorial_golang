@@ -5,30 +5,34 @@ import "container/heap"
 func FindPath(m *GameMap, x1, y1, x2, y2 int) [][2]int {
 	const blockedCost = 10
 
-	cost := make([]int, m.Width*m.Height) // cheapest known cost to reach each tile
-	prev := make([]int, m.Width*m.Height) // which tile we came from
-	for i := range cost {
-		cost[i] = -1
+	// cost[y][x] is the cheapest known cost to reach a cell (-1: not reached),
+	// prev[y][x] is the cell we came from on that cheapest route.
+	cost := make([][]int, m.Height)
+	prev := make([][][2]int, m.Height)
+	for y := range cost {
+		cost[y] = make([]int, m.Width)
+		prev[y] = make([][2]int, m.Width)
+		for x := range cost[y] {
+			cost[y][x] = -1
+		}
 	}
-	start, goal := y1*m.Width+x1, y2*m.Width+x2
-	cost[start] = 0
-	pq := &pathQueue{{idx: start, cost: 0}}
+	cost[y1][x1] = 0
+	pq := &pathQueue{{x: x1, y: y1, cost: 0}}
 
 	for pq.Len() > 0 {
 		cur := heap.Pop(pq).(pathNode)
-		if cur.idx == goal {
+		if cur.x == x2 && cur.y == y2 {
 			break
 		}
-		if cur.cost > cost[cur.idx] {
+		if cur.cost > cost[cur.y][cur.x] {
 			continue // a cheaper route to this tile was found already
 		}
-		cx, cy := cur.idx%m.Width, cur.idx/m.Width
 		for dy := -1; dy <= 1; dy++ {
 			for dx := -1; dx <= 1; dx++ {
 				if dx == 0 && dy == 0 {
 					continue
 				}
-				nx, ny := cx+dx, cy+dy
+				nx, ny := cur.x+dx, cur.y+dy
 				if !m.InBounds(nx, ny) || !m.TileAt(nx, ny).Walkable {
 					continue
 				}
@@ -39,23 +43,22 @@ func FindPath(m *GameMap, x1, y1, x2, y2 int) [][2]int {
 				if m.GetBlockingEntityAt(nx, ny) != nil {
 					step += blockedCost
 				}
-				ni := ny*m.Width + nx
-				if cost[ni] == -1 || cur.cost+step < cost[ni] {
-					cost[ni] = cur.cost + step
-					prev[ni] = cur.idx
-					heap.Push(pq, pathNode{idx: ni, cost: cost[ni]})
+				if cost[ny][nx] == -1 || cur.cost+step < cost[ny][nx] {
+					cost[ny][nx] = cur.cost + step
+					prev[ny][nx] = [2]int{cur.x, cur.y}
+					heap.Push(pq, pathNode{x: nx, y: ny, cost: cost[ny][nx]})
 				}
 			}
 		}
 	}
 
-	if cost[goal] == -1 {
+	if cost[y2][x2] == -1 {
 		return nil
 	}
 	// walk back from the goal to the start, then reverse
 	var path [][2]int
-	for i := goal; i != start; i = prev[i] {
-		path = append(path, [2]int{i % m.Width, i / m.Width})
+	for p := [2]int{x2, y2}; p != [2]int{x1, y1}; p = prev[p[1]][p[0]] {
+		path = append(path, p)
 	}
 	for i, j := 0, len(path)-1; i < j; i, j = i+1, j-1 {
 		path[i], path[j] = path[j], path[i]
@@ -63,7 +66,7 @@ func FindPath(m *GameMap, x1, y1, x2, y2 int) [][2]int {
 	return path
 }
 
-type pathNode struct{ idx, cost int }
+type pathNode struct{ x, y, cost int }
 
 type pathQueue []pathNode
 

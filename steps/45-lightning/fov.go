@@ -6,8 +6,8 @@ var octants = [8][4]int{
 }
 
 func (m *GameMap) ComputeFOV(ox, oy, radius int) {
-	for i := range m.Visible {
-		m.Visible[i] = false
+	for _, row := range m.Visible {
+		clear(row)
 	}
 	m.setVisible(ox, oy)
 	for _, o := range octants {
