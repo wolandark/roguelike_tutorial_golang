@@ -9,7 +9,10 @@ A dungeon needs inhabitants. This chapter fills rooms with orcs and trolls, make
 
 Writing `&Entity{Char: 'o', Color: ..., Name: "Orc"}` every time an orc appears is repetitive and error-prone. We want one description per kind of creature, a **template**, and a way to stamp copies out of it. In Python the tutorial uses `copy.deepcopy`. In Go a struct assignment already copies, and a method with a *value receiver* receives a copy for free. The catch, which bites in step 31, is that copying a struct copies pointers inside it, not what they point to; for now `Entity` has no pointers, so a plain copy is a full copy.
 
->>> Add `Name string` and `BlocksMovement bool` to `Entity`, and a method `Spawn(x, y int) *Entity` with a **value** receiver that returns a pointer to a copy placed at (x, y). Create `entity_factories.go` with three templates: `playerTemplate`, `orc` (`o`, green), `troll` (`T`, darker green). Spawn the player and two monsters in `main.go`.
+>>> 1. In `entity.go`, add the fields `Name string` and `BlocksMovement bool` to `Entity`.
+>>> 2. Add a method with a *value* receiver, `func (e Entity) Spawn(x, y int) *Entity`, that copies `e`, sets the copy's position and returns a pointer to the copy.
+>>> 3. Create `entity_factories.go` with three package variables of type `Entity`: `playerTemplate`, `orc` (`o`, green, "Orc") and `troll` (`T`, darker green, "Troll"), all blocking.
+>>> 4. In `main.go`, create the player with `playerTemplate.Spawn(0, 0)` and spawn an orc and a troll next to it instead of the NPC.
 
 !!! A green `o` to your right, a `T` to your left. You can still walk through them.
 

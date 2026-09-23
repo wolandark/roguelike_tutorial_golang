@@ -11,7 +11,12 @@ A potion has no hit points; a corpse has no strength. In a class hierarchy you w
 
 One subtle decision: the `Fighter` will not keep a pointer back to its entity. That would create a cycle (entity to fighter to entity), and cycles make saving in chapter 10 painful. Methods that need the entity take it as a parameter instead.
 
->>> Create `fighter.go` with a `Fighter` struct (HP, MaxHP, Defense, Power), a `SetHP(engine, entity, hp)` that clamps to `[0, MaxHP]` and triggers death once, and an `Entity.Die(engine)` that logs, turns the entity into a red `%`, stops it blocking, clears `Alive` and renames it "remains of ...". Add `Alive bool` and `Fighter *Fighter` to `Entity`, make `Spawn` copy the Fighter struct, give the templates stats, and make the engine's monster loop skip dead entities.
+>>> 1. Create `fighter.go` with a struct `Fighter` holding `HP, MaxHP int`, `Defense int` and `Power int`.
+>>> 2. Add a method `func (f *Fighter) SetHP(engine *Engine, entity *Entity, hp int)` that clamps `hp` to `0..MaxHP` and calls `entity.Die(engine)` when it reaches 0 on a living entity.
+>>> 3. Add a method `func (e *Entity) Die(engine *Engine)` that logs the death and turns the entity into a red `%` named "remains of ...", non-blocking and not alive.
+>>> 4. In `entity.go`, add the fields `Alive bool` and `Fighter *Fighter`, and make `Spawn` copy the `Fighter` struct into a new pointer.
+>>> 5. In `entity_factories.go`, give the three templates `Alive: true` and a `Fighter` with their stats.
+>>> 6. In `engine.go`, skip dead entities in `HandleEnemyTurns`.
 
 !!! Nothing visible changes yet; kicking still only annoys. The numbers get used next step.
 

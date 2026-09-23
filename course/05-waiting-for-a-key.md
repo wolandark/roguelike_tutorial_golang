@@ -6,7 +6,8 @@
 
 tcell hands us events as values of the interface type `tcell.Event`; the concrete type says what happened: `*tcell.EventKey`, `*tcell.EventMouse`, `*tcell.EventResize`. So the question is how to ask "is this a key?" and keep waiting otherwise.
 
->>> Replace the two `PollEvent` calls with a loop that polls until the event is a `*tcell.EventKey`, then returns. Look up the two-result form of a type assertion.
+>>> 1. In `run`, delete the two `screen.PollEvent()` lines.
+>>> 2. In their place, add a `for { }` loop that calls `ev := screen.PollEvent()` and returns `nil` when `ev.(*tcell.EventKey)` succeeds (use the two-result form `_, ok := ...`).
 
 !!! Resizing the window no longer quits, however many times you do it. A key does.
 

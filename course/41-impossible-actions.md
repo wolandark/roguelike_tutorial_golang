@@ -9,7 +9,11 @@ Potions on the floor, an inventory to carry them, a menu to use or drop them. Be
 
 Walk into a wall in step 40 and the monsters get a free turn. That is unfair, and it gets worse with items: drinking a potion at full health should not waste the potion or the turn. Two designs are possible. `Perform` could return a `bool`, "did something happen?", but then it cannot say *why* not. Or it could return an `error`, which carries a message, and a special error type can mark the "not possible, no turn" case so that the loop can tell it apart from a real failure. Go's `errors.As` is built for exactly that distinction.
 
->>> Create `exceptions.go` with an `Impossible` struct holding a message and an `Error() string` method. Make every `Perform` (actions and AI) return `error`; walls, blocked cells and attacking nothing return an `Impossible`. Move the tail of the main handler into a `runAction(engine, self, action) EventHandler`: on an `Impossible`, log its message in grey and return `self` without an enemy turn; on any other error, log it in red; otherwise enemies act, FOV updates, and the next handler is game-over or a fresh main-game handler.
+>>> 1. Create `exceptions.go` with a struct `type Impossible struct { Msg string }` and a method `func (i Impossible) Error() string` returning `i.Msg`.
+>>> 2. In `actions.go`, change the interface method to `Perform(engine *Engine, entity *Entity) error`, and make every `Perform` return an `error`: `nil` on success, `Impossible{"That way is blocked."}` for walls and blockers, `Impossible{"Nothing to attack."}` for melee without a target.
+>>> 3. In `ai.go`, change the `AI` interface and `HostileEnemy.Perform` to return `error` the same way.
+>>> 4. In `input.go`, add a function `func runAction(engine *Engine, self EventHandler, action Action) EventHandler`: on an `Impossible` (check with `errors.As`) log it in grey and return `self`; on another error log it in red; otherwise run the enemy turns and FOV and return the next handler. End `MainGameEventHandler.HandleEvent` with it.
+>>> 5. In `colors.go`, add `colorInvalid`, `colorImpossible` and `colorError`.
 
 !!! Walk into a wall: a grey "That way is blocked." and the monsters do **not** move. Compare with a real step, after which they do.
 

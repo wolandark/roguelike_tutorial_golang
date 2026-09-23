@@ -4,7 +4,10 @@
 
 Arrows and `hjkl` cannot move diagonally, and roguelike players expect `yubn` for that, the numpad, and Home/End/PgUp/PgDn. That is twenty bindings; the tagless switch from step 8 would grow to twenty conditions, and adding one means finding the right spot. A map from key to direction is shorter, and adding a binding is one line. Two maps, because tcell reports special keys through `Key()` and printable characters through `Rune()`, which is the same split the `||` in each case has been bridging. Waiting a turn also needs a key, and therefore an action.
 
->>> Replace the switch in `handleKey` with two lookup tables: `moveKeys map[tcell.Key][2]int` for arrows and the four diagonal special keys, `moveRunes map[rune][2]int` for `hjklyubn` and the numpad digits. Add a `WaitAction` and return it for `.` and `5`.
+>>> 1. In `input.go`, add a package variable `moveKeys map[tcell.Key][2]int` for the arrows and Home/End/PgUp/PgDn.
+>>> 2. Add a package variable `moveRunes map[rune][2]int` for `hjkl`, `yubn` and the numpad digits.
+>>> 3. Rewrite `handleKey` to look the key up in `moveKeys`, then the rune in `moveRunes`, returning a `BumpAction`; keep Escape/Ctrl-C.
+>>> 4. In `actions.go`, add `type WaitAction struct{}` with an empty `Perform`, and return it from `handleKey` for `.` and `5`.
 
 !!! Move with `hjkl`, diagonally with `y u b n`, or the numpad. `.` passes a turn (nothing visible happens yet).
 

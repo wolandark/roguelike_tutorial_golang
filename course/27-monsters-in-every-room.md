@@ -4,7 +4,9 @@
 
 Two monsters next to the player is a demo, not a dungeon. Each room should get a random handful, mostly orcs, some trolls, on random free cells. The generator already visits every room as it carves, so that is the moment to populate it. Two small decisions: how many per room (0 to a maximum), and what to do when a random cell is already taken (skip it, do not stack).
 
->>> Add `placeEntities(room, dungeon, maxMonsters)` that rolls a count, picks random floor cells inside the room, skips occupied ones, and spawns an orc 80% of the time, a troll otherwise. Call it from `GenerateDungeon` for every room, with a new constant `maxMonstersPerRoom = 2`.
+>>> 1. In `procgen.go`, add a function `func placeEntities(room RectangularRoom, dungeon *GameMap, maxMonsters int)` that places 0 to `maxMonsters` monsters on random free cells inside the room: 80% `orc`, 20% `troll`.
+>>> 2. Add a parameter `maxMonstersPerRoom int` to `GenerateDungeon` and call `placeEntities` for every room.
+>>> 3. In `main.go`, add the constant `maxMonstersPerRoom = 2`, pass it, and delete the two hand-placed monsters.
 
 !!! `o`s and `T`s scattered through the dungeon, appearing as your field of view reaches them.
 

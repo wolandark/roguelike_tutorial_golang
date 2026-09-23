@@ -6,7 +6,11 @@ Step 2 has a bug you cannot see yet. Suppose something fails *after* `Init()` su
 
 There are two design options. Keep everything in `main` and remember `Fini` everywhere, or move the work into its own function where Go can guarantee that `Fini` runs whenever that function ends, for any reason. Go has `defer` for exactly that guarantee, and it works per function, which is why the second option needs a second function. Once the work has its own function, it should *report* failures rather than print them, because printing while tcell owns the screen would draw over the game; and `main` becomes the only place that prints.
 
->>> Move the work into `func run() error`. Right after `Init` succeeds, `defer screen.Fini()`. Make `run` return errors instead of printing them, and make `main` print whatever `run` returns to standard error and exit with status 1.
+>>> 1. In `main.go`, add a new function `func run() error` and move everything from `main` into it.
+>>> 2. Inside `run`, change the two error branches to `return err` instead of printing.
+>>> 3. Right after the `Init` check, add `defer screen.Fini()` and delete the old `screen.Fini()` line at the end.
+>>> 4. End `run` with `return nil`.
+>>> 5. Rewrite `main` to call `run()`; if it returns an error, print it with `fmt.Fprintln(os.Stderr, "error:", err)` and call `os.Exit(1)`. Add `"os"` to the imports.
 
 !!! Unchanged on screen. But now any error after `Init`, in this step or in step 56, restores the terminal before it is reported.
 

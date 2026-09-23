@@ -4,7 +4,10 @@
 
 Dots for floor are a fine tradition, but this game draws its floor as **colour**: a space with a coloured background, so the cell's character stays free for whatever stands on it. A look is a character plus two colours, and it will be needed for every kind of tile, so it gets a small type of its own, `Glyph`, with a method that turns it into the `tcell.Style` that `SetContent` wants.
 
->>> Create `tiles.go` with a `Glyph` (rune, foreground, background) and a `Style()` method, and one package-level `floorGlyph`: a space on a blue background. Draw the rectangle with it.
+>>> 1. Create `tiles.go` and declare a struct `Glyph` with fields `Ch rune` and `FG, BG tcell.Color`.
+>>> 2. Add a method `func (g Glyph) Style() tcell.Style` that returns `tcell.StyleDefault.Foreground(g.FG).Background(g.BG)`.
+>>> 3. Declare a package variable `var floorGlyph = Glyph{' ', tcell.ColorWhite, tcell.NewRGBColor(50, 50, 150)}`.
+>>> 4. In `main.go`, change the floor `SetContent` to `screen.SetContent(x, y, floorGlyph.Ch, nil, floorGlyph.Style())`.
 
 !!! The rectangle is solid blue now, and the `@` is drawn on it with the default black background, which the next steps fix.
 

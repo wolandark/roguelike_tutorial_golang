@@ -9,7 +9,10 @@ Two ideas carry the rest of the game. An **entity** is anything that sits somewh
 
 Two integers describe the player. A second thing on screen would need two more, a third two more again, and every one of them wants a glyph and a colour too. Four related values that always travel together are a **struct**. This step only introduces it and moves the player into it; nothing else changes.
 
->>> Create `entity.go` with an `Entity` struct: `X, Y int`, `Char rune`, `Color tcell.Color`. In `main.go`, replace the two integers with `player := &Entity{...}`, draw `player.Char` at `player.X, player.Y` in `player.Color`, and move by changing `player.X` and `player.Y`.
+>>> 1. Create `entity.go` and declare a struct `Entity` with fields `X, Y int`, `Char rune` and `Color tcell.Color`.
+>>> 2. In `main.go`, replace `playerX, playerY := ...` with `player := &Entity{X: screenWidth / 2, Y: screenHeight / 2, Char: '@', Color: tcell.ColorWhite}`.
+>>> 3. Draw the player from its fields: `screen.SetContent(player.X, player.Y, player.Char, nil, tcell.StyleDefault.Foreground(player.Color))`.
+>>> 4. In the `MovementAction` case, change the position with `player.X += action.DX` and `player.Y += action.DY`.
 
 !!! Looks and plays exactly like step 9. The `@` is now a struct.
 

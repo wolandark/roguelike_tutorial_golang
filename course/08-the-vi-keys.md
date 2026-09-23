@@ -18,7 +18,10 @@ In `switch ev.Key()` a `case` is a **value** that gets compared with `ev.Key()`,
 
 Go's `switch` has a second form for exactly this: written without a value, each `case` is a full boolean expression, and the first true one runs. The comparison with `ev.Key()` moves into the cases, and the rune check can sit next to it with `||`.
 
->>> Add the vi keys. Turn `switch ev.Key()` into a tagless `switch {` and make each case a condition: `ev.Key() == tcell.KeyUp || ev.Rune() == 'k'`, and so on for `j`, `h`, `l`. The quit case becomes `ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC`.
+>>> 1. In the up case, try `case tcell.KeyUp || ev.Rune() == 'k':` and read the compiler error.
+>>> 2. Change `switch ev.Key() {` to a tagless `switch {`.
+>>> 3. Rewrite each case as a condition: `case ev.Key() == tcell.KeyUp || ev.Rune() == 'k':`, and the same with `j` for down, `h` for left, `l` for right.
+>>> 4. Rewrite the quit case as `case ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC:`.
 
 !!! The `@` moves with the arrows and with `h j k l`. Escape or Ctrl-C quits.
 

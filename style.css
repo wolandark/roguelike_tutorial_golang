@@ -565,3 +565,6 @@ details.reveal > summary::-webkit-details-marker { display: none; }
   .progress-wrap { display: none; }
   .theme-pick { font-size: 0.7rem; padding: 4px 6px; }
 }
+
+.try ol { margin: 6px 0 0; padding-left: 22px; }
+.try li { margin: 4px 0; line-height: 1.55; }

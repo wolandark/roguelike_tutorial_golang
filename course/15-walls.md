@@ -4,7 +4,9 @@
 
 A floor with no walls is a field. Walls need a second look, and they will need two more facts the floor also has: can you stand on it, can you see through it (chapter 5). A look plus those two facts is a **tile**, and floor and wall are the first two kinds. This step only draws them; the map that stores them is next.
 
->>> In `tiles.go`, add a `Tile` with `Walkable`, `Transparent` and a `Dark` glyph, and two package-level tiles, `floor` and `wall`, both spaces on blue, the wall darker. Draw the rectangle as floor with a one-cell ring of wall around its edge.
+>>> 1. In `tiles.go`, declare a struct `Tile` with fields `Walkable bool`, `Transparent bool` and `Dark Glyph`.
+>>> 2. Replace `floorGlyph` with two package variables in a `var ( )` block: `floor` (walkable, transparent, a space on RGB 50, 50, 150) and `wall` (neither, a space on RGB 0, 0, 100).
+>>> 3. In `main.go`, inside the floor loops, pick `g := floor.Dark`, and switch to `wall.Dark` when the cell is on the edge of the rectangle (`x == 30 || x == 49 || y == 20 || y == 29`). Draw `g`.
 
 !!! A blue room with a darker border. You can still walk through the border; nothing checks it yet.
 

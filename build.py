@@ -124,11 +124,19 @@ def markdown(src):
         elif ln.startswith(">>> "):
             # a "try it first" card: consecutive >>> lines are its paragraphs
             flush()
-            paras = []
+            paras, items = [], []
             while i < len(lines) and lines[i].startswith(">>> "):
-                paras.append(inline(lines[i][4:])); i += 1
-            out.append('<div class="try"><div class="try-head">Try it first</div>' +
-                       "".join(f"<p>{x}</p>" for x in paras) +
+                t = lines[i][4:]
+                m = re.match(r"^\d+\. (.*)$", t)
+                if m:
+                    items.append(inline(m.group(1)))
+                else:
+                    paras.append(inline(t))
+                i += 1
+            body = "".join(f"<p>{x}</p>" for x in paras)
+            if items:
+                body += "<ol>" + "".join(f"<li>{x}</li>" for x in items) + "</ol>"
+            out.append('<div class="try"><div class="try-head">Do it yourself</div>' + body +
                        '<div class="try-actions"><button class="ghost-btn try-load">load the previous step into the editor</button>'
                        '<label class="try-always"><input type="checkbox" class="try-always-box"> always show solutions</label></div></div>')
             continue

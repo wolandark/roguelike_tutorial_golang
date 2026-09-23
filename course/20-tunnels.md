@@ -4,7 +4,10 @@
 
 Two rooms, no way between them. A corridor could be a straight diagonal line, but roguelike corridors are traditionally L-shaped: go horizontally to a corner, then vertically, or vertically first. Each leg is a straight line along one axis, so "every cell on the line" is a loop that steps one cell at a time. The only decision left is which way the L bends, and making that random is what stops every corridor from looking the same.
 
->>> In `procgen.go`, write `line(x1, y1, x2, y2)` returning every cell from one point to the other (both inclusive), `sign(n)` returning -1, 0 or 1, and `tunnelBetween(m, x1, y1, x2, y2)` that picks a corner at random (`math/rand/v2`, `rand.IntN(2)`) and carves both legs. Connect the two rooms' centres in `main.go`.
+>>> 1. In `procgen.go`, add a function `func sign(n int) int` that returns -1, 0 or 1.
+>>> 2. Add a function `func line(x1, y1, x2, y2 int) [][2]int` that returns every cell from the first point to the second, inclusive, stepping one cell at a time.
+>>> 3. Add a function `func tunnelBetween(m *GameMap, x1, y1, x2, y2 int)` that picks the corner `(x2, y1)` or `(x1, y2)` with `rand.IntN(2)` and sets every cell of both legs to `floor`. Import `math/rand/v2`.
+>>> 4. In `main.go`, after carving the rooms, call `tunnelBetween` between their centres.
 
 !!! An L-shaped corridor joins the rooms; the yellow `@` is reachable. Run it a few times: the corner flips between the two bends.
 

@@ -6,7 +6,10 @@ Run step 1 with a terminal type tcell has never heard of: `TERM=nonsense go run 
 
 Go has no exceptions. A function that can fail returns an `error` as its last result, and the caller decides what to do. The convention is blunt: check it immediately, on the next line. That is the whole change in this step, but it is the pattern you will write more than any other in Go, so it gets a step of its own.
 
->>> Keep the error from `NewScreen` instead of discarding it, and check the one `Init` returns too. When either is not `nil`, print it and stop, before touching the screen.
+>>> 1. In `main.go`, change `screen, _ := tcell.NewScreen()` to `screen, err := tcell.NewScreen()`.
+>>> 2. Right below it, add an `if err != nil` block that prints the error with `fmt.Println("error:", err)` and returns.
+>>> 3. Replace the bare `screen.Init()` call with `if err := screen.Init(); err != nil { ... }`, printing and returning the same way.
+>>> 4. Add `"fmt"` to the imports.
 
 !!! Same picture as step 1. With `TERM=nonsense go run .` you now get one line, `error: couldn't open terminfo ($TERM) file for nonsense`, instead of a stack trace.
 

@@ -4,7 +4,10 @@
 
 Kill an orc, step onto its corpse, and let a troll follow you: sometimes the `%` is drawn over the troll. Entities are drawn in list order, and whatever is drawn last wins. We want corpses at the bottom, items (chapter 8) above them, living actors on top. That is a sort key per entity and a sort before drawing, but the sort must not disturb the list itself, because list order also decides who acts first.
 
->>> Add a `RenderOrder` type with three constants (corpse, item, actor), a field on `Entity`, set it in the templates and in `Die`, and sort a *copy* of the entity list by it in `GameMap.Render` before drawing.
+>>> 1. In `entity.go`, declare `type RenderOrder int` with the constants `RenderCorpse`, `RenderItem`, `RenderActor` using `iota`, and add a field `RenderOrder RenderOrder` to `Entity`.
+>>> 2. In `entity_factories.go`, set `RenderOrder: RenderActor` on the three templates.
+>>> 3. In `fighter.go`, set `e.RenderOrder = RenderCorpse` in `Die`.
+>>> 4. In `gamemap.go`, in `Render`, copy `m.Entities`, sort the copy with `sort.SliceStable` by `RenderOrder`, and draw the sorted copy.
 
 !!! Kill an orc, step onto its corpse, let a troll follow you: the living are always drawn over the `%`.
 

@@ -4,7 +4,10 @@
 
 To put a wall somewhere we have to write `gameMap.Tiles[y*gameMap.Width+x] = wall`, and the same formula already sits in `Render`. Every place that repeats it is a place where `y*Width+x` can be mistyped as `x*Width+y`, which compiles and puts the wall somewhere else. So the formula goes into two small methods, one to read a cell and one to write it, and from here on nothing else in the game indexes `Tiles` directly.
 
->>> Add `TileAt(x, y) Tile` and `SetTile(x, y, t Tile)` to `GameMap`, use `TileAt` in `Render`, and in `main.go` turn three cells of row 22 into `wall`.
+>>> 1. In `gamemap.go`, add a method `func (m *GameMap) TileAt(x, y int) Tile` that returns `m.Tiles[y*m.Width+x]`.
+>>> 2. Add a method `func (m *GameMap) SetTile(x, y int, t Tile)` that assigns `t` to the same element.
+>>> 3. In `Render`, replace the index expression with `m.TileAt(x, y)`.
+>>> 4. In `main.go`, after creating the map, call `gameMap.SetTile(x, 22, wall)` for `x` from 30 to 32.
 
 !!! A darker three-cell wall in the middle of the blue floor, this time stored in the map rather than drawn by hand. You can still walk through it; that is the next step.
 

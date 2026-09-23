@@ -4,7 +4,8 @@
 
 The `@` stands on nothing. A dungeon floor is, at its simplest, a rectangle of cells drawn before the entities so they appear on top of it. No new types yet: two nested loops and `SetContent`, the same call that draws the `@`.
 
->>> Before the entities are drawn, fill a rectangle from column 30 to 49 and row 20 to 29 with `.` cells.
+>>> 1. In the loop in `main.go`, right after `screen.Clear()` and before the entities are drawn, add two nested loops: `y` from 20 to 29, `x` from 30 to 49.
+>>> 2. Inside them, draw a floor cell: `screen.SetContent(x, y, '.', nil, tcell.StyleDefault)`.
 
 !!! A block of dots below the `@`. Walk onto it: the `@` is drawn over the dots, because entities are drawn after the floor.
 

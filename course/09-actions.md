@@ -8,7 +8,10 @@ The fix is to separate two questions. Input answers only "what does the player w
 
 This is also the first time the program is more than one file. All `.go` files in the folder belong to `package main` and see each other's names; there is nothing to import.
 
->>> Create `actions.go` with an `Action` type that any value can be (an empty interface), plus `EscapeAction` (no data) and `MovementAction` with `DX, DY int`. Create `input.go` with `handleKey(ev *tcell.EventKey) Action` that moves the tagless switch there and returns those values (arrows and vi keys to movements, Escape/Ctrl-C to escape, `nil` otherwise). In the loop, switch on the action's type instead of the key.
+>>> 1. Create `actions.go`. Declare an interface `type Action interface{}`.
+>>> 2. In the same file, declare two structs: `type EscapeAction struct{}` and `type MovementAction struct { DX, DY int }`.
+>>> 3. Create `input.go` with a function `func handleKey(ev *tcell.EventKey) Action`. Move the tagless switch there and make each case *return* a value instead of changing the position: `MovementAction{DX: 0, DY: -1}` for up and so on, `EscapeAction{}` for quit, and `return nil` at the end.
+>>> 4. In `main.go`, replace the switch in the loop with a type switch: `switch action := handleKey(ev).(type)` with `case nil:` (do nothing), `case EscapeAction:` (return nil) and `case MovementAction:` (add `action.DX` and `action.DY` to the position).
 
 !!! Behaves exactly like step 7. The structure is what changed.
 

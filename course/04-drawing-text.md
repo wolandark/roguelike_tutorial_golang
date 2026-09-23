@@ -4,7 +4,8 @@
 
 `SetContent` draws one character. We want to write a sentence. A string in Go is a sequence of *bytes*, and `range` over a string gives byte offsets. For plain ASCII that is harmless: every character is one byte, so the offsets are the character positions and `for i, r := range msg` draws the sentence correctly. It stops being harmless the moment a message contains `é`, `┤` or an emoji, which are two to four bytes each: the offset jumps and a gap appears. Since the game will draw box-drawing characters in chapter 7, we walk the string character by character from the start, by converting it to runes.
 
->>> Write `Hello, roguelike! Press any key to quit.` on row 1, starting at column 1, one character per cell. Hint: `range` over `[]rune(msg)`, not over `msg`.
+>>> 1. In `run`, after the `SetContent` for the `@`, declare `msg := "Hello, roguelike! Press any key to quit."`.
+>>> 2. Add a loop `for i, r := range []rune(msg)` that calls `screen.SetContent(1+i, 1, r, nil, tcell.StyleDefault)`.
 
 !!! The greeting on row 1, the `@` still on row 5.
 

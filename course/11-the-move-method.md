@@ -6,7 +6,8 @@
 
 There is one decision to make, and it is the one Go beginners get wrong most often: does the method work on the caller's entity, or on a copy?
 
->>> Add `func (e *Entity) Move(dx, dy int)` to `entity.go` that adds the deltas to the entity's position, and call `player.Move(action.DX, action.DY)` in the loop.
+>>> 1. In `entity.go`, add a method `func (e *Entity) Move(dx, dy int)` that adds `dx` to `e.X` and `dy` to `e.Y`.
+>>> 2. In `main.go`, replace the two `+=` lines in the `MovementAction` case with `player.Move(action.DX, action.DY)`.
 
 !!! Still moves exactly as before.
 

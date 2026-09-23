@@ -4,7 +4,11 @@
 
 Five lines of log scroll away fast. Pressing `v` should open the whole history in a window you can scroll, and closing it should return to the game exactly as it was. This is the first *window*, and the event-handler design from step 36 makes it a handler with a parent: it draws the parent first (so the game stays visible behind it), then its own box, and returns the parent on any key it does not use. Every menu from now on follows this shape. Windows need a frame, which is our first box-drawing characters, and clearing the inside is kept separate from drawing the border, because chapter 9 will want a border *over* the map.
 
->>> Add `drawFrame(screen, x, y, w, h, title, style)` (border only, centred title) and `clearRect` to `render_functions.go`. Add a `HistoryViewer` handler with a `Parent`, a cursor into the log, arrow/PgUp/PgDn/Home/End scrolling with wrap-around, and any other key returning the parent. `v` in the main handler opens it.
+>>> 1. In `render_functions.go`, add a function `func drawFrame(screen tcell.Screen, x, y, width, height int, title string, style tcell.Style)` that draws a box border with a centred title, and `func clearRect(screen tcell.Screen, x, y, width, height int, style tcell.Style)`.
+>>> 2. In `input.go`, declare a struct `HistoryViewer` with fields `Engine *Engine`, `Parent EventHandler`, `LogLength int` and `Cursor int`, and a constructor function `func NewHistoryViewer(engine *Engine, parent EventHandler) *HistoryViewer`.
+>>> 3. Give `HistoryViewer` an `OnRender` that renders the parent, clears a rectangle, draws a frame and the messages up to the cursor.
+>>> 4. Give it a `HandleEvent` that moves the cursor with the arrows, PgUp/PgDn, Home/End (wrapping at both ends) and returns `Parent` for any other key.
+>>> 5. In `MainGameEventHandler.HandleEvent`, return `NewHistoryViewer(h.Engine, h)` when the rune is `v`.
 
 !!! Fight a bit, press `v`, scroll with the arrows, press any other key to close.
 

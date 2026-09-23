@@ -4,7 +4,9 @@
 
 We have a key event and ignore what key it was. tcell tells us through `ev.Key()`, which returns named constants for special keys (`tcell.KeyUp`, `tcell.KeyEscape`, ...). One thing to know about the terminal first: in raw mode Ctrl-C is no longer a signal that kills the program; it arrives as an ordinary key. If we do not handle it, the player is trapped. So we need arrows to move and two keys to quit.
 
->>> Branch on `ev.Key()`: the four arrows change `playerX`/`playerY` (remember row 0 is at the top), Escape and Ctrl-C return. Other keys do nothing.
+>>> 1. In the loop, change the poll to `ev, ok := screen.PollEvent().(*tcell.EventKey)` and `continue` when `!ok`.
+>>> 2. Add `switch ev.Key()` with four cases, `tcell.KeyUp`, `tcell.KeyDown`, `tcell.KeyLeft`, `tcell.KeyRight`, that change `playerY` or `playerX` by one (row 0 is at the top).
+>>> 3. Add a fifth case, `case tcell.KeyEscape, tcell.KeyCtrlC:`, that returns `nil`.
 
 !!! The `@` moves with the arrows. It can walk off the screen, since there is no map yet. Escape or Ctrl-C quits.
 

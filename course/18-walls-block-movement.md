@@ -6,7 +6,14 @@ Walk into the wall in step 13: you pass through. The movement code changes x and
 
 "The world" is about to be several things: entities, the player, the map. Bundling them into an **Engine** struct gives actions one parameter, and gives the loop one object to ask for drawing and input handling. After this step `main.go` is tiny and stays that way.
 
->>> Add `InBounds(x, y) bool` to `GameMap`: true when `0 <= x < Width` and `0 <= y < Height`, false for any cell outside the map. Give `Action` a method, `Perform(engine *Engine, entity *Entity)`. Make `MovementAction.Perform` refuse to move off the map (`InBounds`) or onto a non-walkable tile (`TileAt(...).Walkable`), in that order. Create `engine.go` with an `Engine` holding the entities, the player and the map, a `HandleEvent(ev) (quit bool)` that turns keys into actions and performs them, and a `Render(screen)` that clears, draws map and entities, and shows. Shrink `run` to build the engine and loop.
+>>> 1. In `gamemap.go`, add a method `func (m *GameMap) InBounds(x, y int) bool` that returns true when `0 <= x < m.Width` and `0 <= y < m.Height`.
+>>> 2. In `actions.go`, give the interface a method: `type Action interface { Perform(engine *Engine, entity *Entity) }`.
+>>> 3. Add an empty method `func (EscapeAction) Perform(*Engine, *Entity) {}` so `EscapeAction` still satisfies it.
+>>> 4. Add a method `func (a MovementAction) Perform(engine *Engine, entity *Entity)`: compute the destination, return if it is not `InBounds`, return if `TileAt(...).Walkable` is false, otherwise call `entity.Move(a.DX, a.DY)`.
+>>> 5. Create `engine.go` with a struct `Engine` holding `Entities []*Entity`, `Player *Entity` and `GameMap *GameMap`.
+>>> 6. Add a method `func (e *Engine) HandleEvent(ev tcell.Event) (quit bool)`: ignore non-key events, turn the key into an action with `handleKey`, return true for `EscapeAction`, otherwise call `action.Perform(e, e.Player)`.
+>>> 7. Add a method `func (e *Engine) Render(screen tcell.Screen)` that clears, renders the map, draws every entity and shows.
+>>> 8. In `main.go`, build `engine := &Engine{...}` and replace the whole loop body with `engine.Render(screen)` and `if engine.HandleEvent(screen.PollEvent()) { return nil }`.
 
 !!! Walk into the three-cell wall; the `@` stops. The map edge stops you too.
 
