@@ -1,5 +1,0 @@
-{
- "base": "steps/51-the-inventory-menu",
- "file": "consumable.go",
- "prompt": "Not every bottle is friendly. Add a `PoisonConsumable` with a `Damage int` field that implements `Consumable`. Using it is an `ItemAction` like the potion; `Activate` deals `Damage` to the consumer via `Fighter.SetHP`, logs `You drink the <name>... it was poison! You lose <n> HP.` in `colorEnemyAtk`, and consumes the item. It is never `Impossible`."
-}
